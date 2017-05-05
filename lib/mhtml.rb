@@ -1,5 +1,8 @@
-require "mhtml/version"
+require 'mhtml/version'
+
+require 'mhtml/document'
+require 'mhtml/header'
+require 'mhtml/sub_document'
 
 module Mhtml
-  # Your code goes here...
 end
