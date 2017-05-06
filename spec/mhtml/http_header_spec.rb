@@ -4,15 +4,15 @@ module Mhtml
   RSpec.describe HttpHeader do
 
     let(:header_str) do
-      %q[Content-Type: multipart/related; boundary="p00ts"]
+      %q[Content-Type: multipart/related; boundary="--p00ts"]
     end
 
     let(:key) { 'Content-Type' }
 
     let(:values) do
       [
-        [ 'multipart/related', nil ],
-        [ 'boundary', 'p00ts' ]
+        { value: 'multipart/related' },
+        { key: 'boundary', value: 'p00ts' }
       ]
     end
 

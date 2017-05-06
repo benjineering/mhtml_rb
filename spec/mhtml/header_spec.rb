@@ -15,13 +15,11 @@ Microsoft Internet Explorer.
 }
     end
 
-    let(:mime_version) { '1.0' }
-
     let(:http_headers) do
       [{
         key: 'Content-Type',
         values: [
-          { key: nil, value: 'multipart/related' },
+          { value: 'multipart/related' },
           { key: 'boundary', value: '----=_NextPart_01C74319.B7EA56A0' }
         ]
       }]
@@ -36,13 +34,9 @@ Microsoft Internet Explorer.}
 
     let(:header) { Header.new(header_str) }
 
-    let(:boundary) { '----=_NextPart_01C74319.B7EA56A0' }
+    let(:boundary) { '--=_NextPart_01C74319.B7EA56A0' }
 
     describe '#new' do
-      it 'reads the mime version' do
-        expect(header.mime_version).to eq(mime_version)
-      end
-
       it 'reads the http headers' do
         expect(header.http_headers.length).to eq(http_headers.length)
 

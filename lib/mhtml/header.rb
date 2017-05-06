@@ -1,6 +1,6 @@
 module Mhtml
   class Header
-    attr_reader :mime_version, :http_headers, :boundary, :body
+    attr_reader :http_headers, :boundary, :body
 
     # str example:
     # MIME-Version: 1.0

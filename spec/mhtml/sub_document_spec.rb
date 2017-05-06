@@ -1,16 +1,32 @@
 require 'spec_helper'
 
 module Mhtml
-  RSpec.describe SubDocument do    
+  RSpec.describe SubDocument do
+
+# Content-Location: file:///C:/9F2532D4/01.TheRoleoftheOrthopedicRadiologist.htm
+# Content-Transfer-Encoding: quoted-printable
+# Content-Type: text/html; charset="us-ascii"
 
     let(:http_headers) do
-      [{
-        key: 'Content-Type',
-        values: [
-          { key: nil, value: 'multipart/related' },
-          { key: 'boundary', value: '----=_NextPart_01C74319.B7EA56A0' }
-        ]
-      }]
+      [
+        {
+          key: 'Content-Location',
+          values: [{
+            value: 'file:///C:/9F2532D4/01.TheRoleoftheOrthopedicRadiologist.htm'
+          }]
+        },
+        {
+          key: 'Content-Transfer-Encoding',
+          values: [{ value: 'quoted-printable' }]
+        },
+        {
+          key: 'Content-Type',
+          values: [
+            { value: 'text/html' },
+            { key: 'charset', value: 'us-ascii' }
+          ]
+        }
+      ]
     end
 
     let(:body) do
