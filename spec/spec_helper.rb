@@ -1,3 +1,4 @@
+require 'attr_hash'
 require 'bundler/setup'
 require 'mhtml'
 

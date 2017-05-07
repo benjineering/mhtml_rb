@@ -19,10 +19,10 @@ Microsoft Internet Explorer.
       [{
         key: 'Content-Type',
         values: [
-          { value: 'multipart/related' },
-          { key: 'boundary', value: '----=_NextPart_01C74319.B7EA56A0' }
+          { value: 'multipart/related' }.attr_hash,
+          { key: 'boundary', value: '----=_NextPart_01C74319.B7EA56A0' }.attr_hash
         ]
-      }]
+      }.attr_hash ]
     end
 
     let(:body) do

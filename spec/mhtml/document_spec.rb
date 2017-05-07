@@ -48,32 +48,32 @@ AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=
         http_headers: [
           {
             key: 'From',
-            values: [{ value: '<Saved by Mozilla 5.0 (Macintosh)>' }]
-          },
+            values: [{ value: '<Saved by Mozilla 5.0 (Macintosh)>' }.attr_hash ]
+          }.attr_hash,
           {
             key: 'Subject',
-            values: [{ value: 'Test Doc' }]
-          },
+            values: [{ value: 'Test Doc' }.attr_hash ]
+          }.attr_hash,
           {
             key: 'Date',
-            values: [{ value: 'Sat, 06 May 2017 16:48:07 +1000' }]
-          },
+            values: [{ value: 'Sat, 06 May 2017 16:48:07 +1000' }.attr_hash]
+          }.attr_hash,
           {
             key: 'MIME-Version',
-            values: [{ value: '1.0' }]
+            values: [{ value: '1.0' }.attr_hash ]
           },
           {
             key: 'Content-Type',
             values: [
-              { value: 'multipart/related' },
-              { key: 'type', value: 'text/html' },
-              { key: 'boundary', value: '----=_NextPart_000_0000_CC3AA3A9.09B072C9' }
+              { value: 'multipart/related' }.attr_hash,
+              { key: 'type', value: 'text/html' }.attr_hash,
+              { key: 'boundary', value: '----=_NextPart_000_0000_CC3AA3A9.09B072C9' }.attr_hash
             ]
-          },
+          }.attr_hash,
           {
             key: 'X-MAF-Information',
-            values: [{ value: 'Produced By MAF V4.1.0' }]
-          }
+            values: [{ value: 'Produced By MAF V4.1.0' }.attr_hash ]
+          }.attr_hash
         ],
         boundary: '--=_NextPart_000_0000_CC3AA3A9.09B072C9', 
         body: 'This is a multi-part message in MIME format.'
@@ -87,18 +87,18 @@ AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=
             {
               key: 'Content-Type',
               values: [
-                { value: 'text/html' },
-                { key: 'charset', value: 'windows-1252' }
+                { value: 'text/html' }.attr_hash,
+                { key: 'charset', value: 'windows-1252' }.attr_hash
               ]
-            },
+            }.attr_hash,
             {
               key: 'Content-Transfer-Encoding',
-              values: [{ value: 'quoted-printable' }]
-            },
+              values: [{ value: 'quoted-printable' }.attr_hash ]
+            }.attr_hash,
             {
               key: 'Content-Location',
-              values: [{ value: 'http://localhost:3000/' }]
-            }
+              values: [{ value: 'http://localhost:3000/' }.attr_hash ]
+            }.attr_hash
           ],
           body:
 %q[<!DOCTYPE html><html><head>
@@ -112,16 +112,16 @@ AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=
           headers: [
             {
               key: 'Content-Type',
-              values: [{ value: 'image/png' }]
-            },
+              values: [{ value: 'image/png' }.attr_hash ]
+            }.attr_hash,
             {
               key: 'Content-Transfer-Encoding',
-              values: [{ value: 'base64' }]
-            },
+              values: [{ value: 'base64' }.attr_hash ]
+            }.attr_hash,
             {
               key: 'Content-Location',
-              values: [{ value: 'http://localhost:3000/dot.png' }]
-            }
+              values: [{ value: 'http://localhost:3000/dot.png' }.attr_hash ]
+            }.attr_hash
           ],
           body:
 %q[iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA

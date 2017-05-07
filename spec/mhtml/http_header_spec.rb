@@ -11,8 +11,8 @@ module Mhtml
 
     let(:values) do
       [
-        { value: 'multipart/related' },
-        { key: 'boundary', value: 'p00ts' }
+        { value: 'multipart/related' }.attr_hash,
+        { key: 'boundary', value: '--p00ts' }.attr_hash
       ]
     end
 

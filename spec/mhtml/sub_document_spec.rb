@@ -3,29 +3,25 @@ require 'spec_helper'
 module Mhtml
   RSpec.describe SubDocument do
 
-# Content-Location: file:///C:/9F2532D4/01.TheRoleoftheOrthopedicRadiologist.htm
-# Content-Transfer-Encoding: quoted-printable
-# Content-Type: text/html; charset="us-ascii"
-
     let(:http_headers) do
       [
         {
           key: 'Content-Location',
           values: [{
             value: 'file:///C:/9F2532D4/01.TheRoleoftheOrthopedicRadiologist.htm'
-          }]
-        },
+          }.attr_hash]
+        }.attr_hash,
         {
           key: 'Content-Transfer-Encoding',
-          values: [{ value: 'quoted-printable' }]
-        },
+          values: [{ value: 'quoted-printable' }.attr_hash ]
+        }.attr_hash,
         {
           key: 'Content-Type',
           values: [
-            { value: 'text/html' },
-            { key: 'charset', value: 'us-ascii' }
+            { value: 'text/html' }.attr_hash,
+            { key: 'charset', value: 'us-ascii' }.attr_hash
           ]
-        }
+        }.attr_hash
       ]
     end
 
