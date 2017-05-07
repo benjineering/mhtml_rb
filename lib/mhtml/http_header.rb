@@ -1,5 +1,7 @@
 module Mhtml
   class HttpHeader
+    require 'string'
+
     attr_reader :key, :values
 
     # str example:
@@ -41,15 +43,15 @@ module Mhtml
       # value
       # key="value"
       def initialize(str)
-        parts = str.match(/\A
-          ((?<key>.+)=)?
-          "?(?<value>[^"']+)"?
-        \Z/x)
+        split_i = str.index('=')
+        @key = str[0, split_i].strip unless split_i.nil?
 
-        return nil if parts['value'].nil?
-
-        @key = parts['key'].nil? ? nil : parts['key'].strip
-        @value = parts['value'].strip
+        @value = 
+        if split_i.nil?
+          str.strip
+        else
+          str[split_i + 1, str.length - 1].strip.strip_other('"')
+        end
       end
     end
   end

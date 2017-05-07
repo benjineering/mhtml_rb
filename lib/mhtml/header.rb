@@ -1,5 +1,7 @@
 module Mhtml
   class Header
+    require 'string'
+
     attr_reader :http_headers, :boundary, :body
 
     # str example:
@@ -14,21 +16,38 @@ module Mhtml
       raise 'String is nil or empty' if str.nil? || str.strip.empty?
 
       str.strip!
+      parts = str.split("#{LINE_BREAK}#{LINE_BREAK}")
 
-      parts = str.match(/\A
-        (?<http_headers>.+)
-        #{LINE_BREAK}#{LINE_BREAK}
-        (?<body>.+)?
-      \Z/x)
-
-      raise "Invalid string:\n#{str}" if parts.nil? || parts['http_headers'].nil?
-
-      @body = parts['body'].nil? ? nil : parts['body'].strip
+      @body = parts[1].strip if parts.length > 1
       @http_headers = []
 
-      parts['http_headers'].split(/#{LINE_BREAK}[^\t ]/).each do |head_str|
+      prev_index = 0
+      parts.first.each_index(/#{LINE_BREAK}[^\t ]/) do |i|
+        head_str = parts.first[prev_index, i].strip
+        add_header(head_str)
+        prev_index = i
+      end
 
+      head_str = parts.first[prev_index, parts.first.length - 1].strip
+      add_header(head_str)
+    end
+
+    private
+
+    def add_header(str)
+      unless str.empty?
+        header = HttpHeader.new(str)
+        @http_headers << header
+
+        if header.key == 'Content-Type'
+          header.values.each do |value|
+            if !value.key.nil? && value.key.downcase == 'boundary'
+              @boundary = value.value.strip_other('--')
+            end
+          end
+        end
       end
     end
+
   end
 end
