@@ -3,9 +3,7 @@ require 'stringio'
 
 module Mhtml
   RSpec.describe Reader do
-
-    describe '.read' do
-      let (:doc_str) do
+    let (:doc_str) do
   %q[From: <Saved by Mozilla 5.0 (Macintosh)>
   Subject: Test Doc
   Date: Sat, 06 May 2017 16:48:07 +1000
@@ -37,98 +35,99 @@ module Mhtml
   AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=
   ------=_NextPart_000_0000_CC3AA3A9.09B072C9--
   ]
-      end
+    end
 
-      let(:header) do
+    let(:header) do
+      {
+        http_headers: [
+          {
+            key: 'From',
+            values: [{ value: '<Saved by Mozilla 5.0 (Macintosh)>' }]
+          },
+          {
+            key: 'Subject',
+            values: [{ value: 'Test Doc' }]
+          },
+          {
+            key: 'Date',
+            values: [{ value: 'Sat, 06 May 2017 16:48:07 +1000' }]
+          },
+          {
+            key: 'MIME-Version',
+            values: [{ value: '1.0' }]
+          },
+          {
+            key: 'Content-Type',
+            values: [
+              { value: 'multipart/related' },
+              { key: 'type', value: 'text/html' },
+              { key: 'boundary', value: '----=_NextPart_000_0000_CC3AA3A9.09B072C9' }
+            ]
+          },
+          {
+            key: 'X-MAF-Information',
+            values: [{ value: 'Produced By MAF V4.1.0' }]
+          }
+        ],
+        boundary: '--=_NextPart_000_0000_CC3AA3A9.09B072C9', 
+        body: 'This is a multi-part message in MIME format.'
+      }
+    end
+
+    let(:sub_docs) do
+      [
         {
-          http_headers: [
-            {
-              key: 'From',
-              values: [{ value: '<Saved by Mozilla 5.0 (Macintosh)>' }]
-            },
-            {
-              key: 'Subject',
-              values: [{ value: 'Test Doc' }]
-            },
-            {
-              key: 'Date',
-              values: [{ value: 'Sat, 06 May 2017 16:48:07 +1000' }]
-            },
-            {
-              key: 'MIME-Version',
-              values: [{ value: '1.0' }]
-            },
+          headers: [
             {
               key: 'Content-Type',
               values: [
-                { value: 'multipart/related' },
-                { key: 'type', value: 'text/html' },
-                { key: 'boundary', value: '----=_NextPart_000_0000_CC3AA3A9.09B072C9' }
+                { value: 'text/html' },
+                { key: 'charset', value: 'windows-1252' }
               ]
             },
             {
-              key: 'X-MAF-Information',
-              values: [{ value: 'Produced By MAF V4.1.0' }]
+              key: 'Content-Transfer-Encoding',
+              values: [{ value: 'quoted-printable' }]
+            },
+            {
+              key: 'Content-Location',
+              values: [{ value: 'http://localhost:3000/' }]
             }
           ],
-          boundary: '--=_NextPart_000_0000_CC3AA3A9.09B072C9', 
-          body: 'This is a multi-part message in MIME format.'
+          body:
+%q[<!DOCTYPE html><html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+  <title>Test Doc</title>
+</head>
+<body>
+  <img src="http://localhost:3000/dot.png">]
+        },
+        {
+          headers: [
+            {
+              key: 'Content-Type',
+              values: [{ value: 'image/png' }]
+            },
+            {
+              key: 'Content-Transfer-Encoding',
+              values: [{ value: 'base64' }]
+            },
+            {
+              key: 'Content-Location',
+              values: [{ value: 'http://localhost:3000/dot.png' }]
+            }
+          ],
+          body:
+%q[iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA
+B3RJTUUH4QUGBicvid5BpQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUH
+AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=]
         }
-      end
+      ]
+    end
 
-      let(:sub_docs) do
-        [
-          {
-            headers: [
-              {
-                key: 'Content-Type',
-                values: [
-                  { value: 'text/html' },
-                  { key: 'charset', value: 'windows-1252' }
-                ]
-              },
-              {
-                key: 'Content-Transfer-Encoding',
-                values: [{ value: 'quoted-printable' }]
-              },
-              {
-                key: 'Content-Location',
-                values: [{ value: 'http://localhost:3000/' }]
-              }
-            ],
-            body:
-  %q[<!DOCTYPE html><html><head>
-  <meta http-equiv="content-type" content="text/html; charset=windows-1252">
-    <title>Test Doc</title>
-  </head>
-  <body>
-    <img src="http://localhost:3000/dot.png">]
-          },
-          {
-            headers: [
-              {
-                key: 'Content-Type',
-                values: [{ value: 'image/png' }]
-              },
-              {
-                key: 'Content-Transfer-Encoding',
-                values: [{ value: 'base64' }]
-              },
-              {
-                key: 'Content-Location',
-                values: [{ value: 'http://localhost:3000/dot.png' }]
-              }
-            ],
-            body:
-  %q[iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA
-  B3RJTUUH4QUGBicvid5BpQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUH
-  AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=]
-          }
-        ]
-      end
+    let (:io) { StringIO.new(doc_str) }
 
-      let (:io) { StringIO.new(doc_str) }
-
+    describe '.read' do
       it 'accepts an IO and a block' do
         expect { Reader.read(io) { }}.to_not raise_error
       end
@@ -151,6 +150,29 @@ module Mhtml
           actual_count += 1
         end
 
+        expect(actual_count).to eq(expected_count)
+      end
+    end
+
+    describe '#<<' do      
+
+      it 'reads chunks ' do
+        expected_count = sub_docs.length
+        actual_count = 0
+        buffer = nil
+
+        reader = Reader.new do |item|
+          expect(item).to be_a(Header) if actual_count == 0
+          expect(item).to be_a(SubDoc)
+          actual_count += 1
+        end
+
+        loop do
+          buffer = io.read(2048)
+          break if buffer.nil?
+          reader << buffer
+        end
+        
         expect(actual_count).to eq(expected_count)
       end
     end

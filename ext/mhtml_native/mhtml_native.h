@@ -5,7 +5,7 @@
 
 #define BUFFER_SIZE 2048
 
-struct Header {
+struct HttpHeader {
   const char *key;
   const char *value;
 };
