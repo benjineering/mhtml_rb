@@ -1,4 +1,3 @@
-
 class AttrHash
   attr_reader :hsh
 

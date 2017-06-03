@@ -3,43 +3,6 @@ require 'spec_helper'
 module Mhtml
   RSpec.describe Header do
 
-    let(:header_str) do
-"MIME-Version: 1.0\r\n"\
-'Content-Type: multipart/related; boundary="----=_NextPart_01C74319.B7EA56A0"'\
-"\r\n\r\n"\
-'This document is a Single File Web Page, also known as a Web Archive file.  '\
-'If you are seeing this message, your browser or editor doesn\'t support Web '\
-'Archive files.  Please download a browser that supports Web Archive, such as '\
-'Microsoft Internet Explorer.'
-    end
-
-    let(:http_headers) do
-      [
-        {
-          key: 'MIME-Version',
-          values: [{ value: '1.0' }.attr_hash ]
-        }.attr_hash,
-        {
-          key: 'Content-Type',
-          values: [
-            { value: 'multipart/related' }.attr_hash,
-            { key: 'boundary', value: '----=_NextPart_01C74319.B7EA56A0' }.attr_hash
-          ]
-        }.attr_hash
-      ]
-    end
-
-    let(:body) do
-'This document is a Single File Web Page, also known as a Web Archive file.  '\
-'If you are seeing this message, your browser or editor doesn\'t support Web '\
-'Archive files.  Please download a browser that supports Web Archive, such as '\
-'Microsoft Internet Explorer.'
-    end
-
-    let(:header) { Header.new(header_str) }
-
-    let(:boundary) { '--=_NextPart_01C74319.B7EA56A0' }
-
     describe '#new' do
       it 'reads the http headers' do
         expect(header.http_headers.length).to eq(http_headers.length)

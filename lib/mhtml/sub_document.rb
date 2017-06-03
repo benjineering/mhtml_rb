@@ -55,7 +55,7 @@ module Mhtml
 
     # </html>
     def initialize(str)
-
+      
     end
   end
 end
