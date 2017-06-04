@@ -40,4 +40,11 @@ RSpec.describe String do
       expect('=p00ts='.strip_other('=')).to eq('p00ts')
     end
   end
+
+  describe '#underscore' do
+    it 'converts camel case to snake' do
+      expect('Document'.underscore).to eq('document')
+      expect('HttpHeader'.underscore).to eq('http_header')
+    end
+  end
 end
