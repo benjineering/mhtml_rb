@@ -17,8 +17,14 @@ RSpec.describe AttrHash do
   end
 
   describe '#x' do
-    it 'returns the hash value' do
+    it 'returns the hash value for a matching key symbol' do
       hsh = { p00t: 'w00t' }
+      a_hash = AttrHash.new(hsh)
+      expect(a_hash.p00t).to eq('w00t')
+    end
+
+    it 'returns the hash value for a matching key string' do
+      hsh = { 'p00t' => 'w00t' }
       a_hash = AttrHash.new(hsh)
       expect(a_hash.p00t).to eq('w00t')
     end

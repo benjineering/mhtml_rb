@@ -2,25 +2,20 @@
 class AttrHash
   attr_reader :hsh
 
-  instance_methods(false).each do |method|
-    unless method.to_sym == :hsh
-      self.hsh[method.to_sym]
-    end
-  end
-
   def initialize(hsh)
-    @hsh = hsh
+    @hsh = hsh  
     iterate(@hsh)
   end
 
   def method_missing(method_name, *arguments, &block)
-    self.hsh[method_name.to_sym]
+    val = @hsh[method_name]
+    val = @hsh[method_name.to_s] if val.nil?
+    val
   end
 
   private
 
   def iterate(enum)
-
     if enum.is_a?(Array)
       enum.each_with_index do |v, i|
         enum[i] = AttrHash.new(v) if v.is_a?(Hash)

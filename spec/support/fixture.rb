@@ -3,16 +3,20 @@ class Fixture
 
   FIXTURES_ROOT = "#{File.expand_path(File.dirname(__FILE__))}/fixtures"
 
-  attr_reader :yaml
+  attr_reader :yaml, :instance, :data
 
   def initialize(klass)
     class_name = klass.name.split('::').last.underscore
     filename = "#{class_name}_fixture.yml"
     path = "#{FIXTURES_ROOT}/#{filename}"
-    @yaml = YAML.load_file(path).attr_hash
+    yaml = YAML.load_file(path)
+
+    @data = yaml[class_name].attr_hash
+    @yaml = yaml.attr_hash
+    @instance = klass.new(@yaml.raw)
   end
 
   def method_missing(method_name, *arguments, &block)
-    @yaml[method_name.to_sym]
+    @data.hsh[method_name.to_s]
   end
 end
