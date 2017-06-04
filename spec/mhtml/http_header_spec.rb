@@ -2,6 +2,7 @@ require 'spec_helper'
 
 module Mhtml
   RSpec.describe HttpHeader do
+    let(:header) { Fixture.new(HttpHeader) }
     
     describe '#new' do
       it 'reads the header key' do

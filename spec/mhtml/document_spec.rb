@@ -2,6 +2,7 @@ require 'spec_helper'
 
 module Mhtml
   RSpec.describe Document do
+    let(:doc) { Fixture.new(Document) }
 
     describe '#new' do
       it 'reads the header' do
