@@ -4,8 +4,6 @@ module Mhtml
 
     attr_reader :key, :values
 
-    # str example:
-    # Content-Type: multipart/related; boundary="p00ts"
     def initialize(str)
       raise 'String is nil or empty' if str.nil? || str.strip.empty?
 

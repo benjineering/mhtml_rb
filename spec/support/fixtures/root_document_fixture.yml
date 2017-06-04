@@ -35,8 +35,9 @@ raw: |
   B3RJTUUH4QUGBicvid5BpQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUH
   AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=
   ------=_NextPart_000_0000_CC3AA3A9.09B072C9--
-header: 
-  http_headers:
+
+root_document:
+  headers:
     - key: 'From'
       values: 
         - value: '<Saved by Mozilla 5.0 (Macintosh)>'
@@ -60,45 +61,45 @@ header:
       values:
         - value: 'Produced By MAF V4.1.0'
 
-boundary: '--=_NextPart_000_0000_CC3AA3A9.09B072C9'
+  boundary: '--=_NextPart_000_0000_CC3AA3A9.09B072C9'
 
-body: 'This is a multi-part message in MIME format.'
+  body: 'This is a multi-part message in MIME format.'
 
-sub_docs: 
-  - headers:
-    - key: 'Content-Type'
-      values:
-        - value: 'text/html'
-        - key: 'charset'
-          value: 'windows-1252'
-    - key: 'Content-Transfer-Encoding'
-      values: 
-        - value: 'quoted-printable'
-    - key: 'Content-Location'
-      values:
-        - value: 'http://localhost:3000/'
-    body: |
-      <!DOCTYPE html><html><head>
-      <meta http-equiv=3D"content-type" content=3D"text/html; charset=3Dwindows-1=
-      252">
-        <title>Test Doc</title>
-      </head>
-      <body>
-        <img src=3D"http://localhost:3000/dot.png">
+  sub_docs: 
+    - headers:
+      - key: 'Content-Type'
+        values:
+          - value: 'text/html'
+          - key: 'charset'
+            value: 'windows-1252'
+      - key: 'Content-Transfer-Encoding'
+        values: 
+          - value: 'quoted-printable'
+      - key: 'Content-Location'
+        values:
+          - value: 'http://localhost:3000/'
+      body: |
+        <!DOCTYPE html><html><head>
+        <meta http-equiv=3D"content-type" content=3D"text/html; charset=3Dwindows-1=
+        252">
+          <title>Test Doc</title>
+        </head>
+        <body>
+          <img src=3D"http://localhost:3000/dot.png">
 
 
-      </body></html>
-  - headers:
-    - key: 'Content-Type'
-      values:
-        - value: 'image/png'
-    - key: 'Content-Transfer-Encoding'
-      values:
-        - value: 'base64'
-    - key: 'Content-Location'
-      values:
-        - value: 'http://localhost:3000/dot.png'
-    body: |
-      iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA
-      B3RJTUUH4QUGBicvid5BpQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUH
-      AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=
+        </body></html>
+    - headers:
+      - key: 'Content-Type'
+        values:
+          - value: 'image/png'
+      - key: 'Content-Transfer-Encoding'
+        values:
+          - value: 'base64'
+      - key: 'Content-Location'
+        values:
+          - value: 'http://localhost:3000/dot.png'
+      body: |
+        iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA
+        B3RJTUUH4QUGBicvid5BpQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUH
+        AAAAC0lEQVQI12NgQAYAAA4AATHp3RUAAAAASUVORK5CYII=

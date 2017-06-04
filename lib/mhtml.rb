@@ -1,5 +1,6 @@
 require 'mhtml/document'
 require 'mhtml/http_header'
+require 'mhtml/root_document'
 require 'mhtml/version'
 
 module Mhtml

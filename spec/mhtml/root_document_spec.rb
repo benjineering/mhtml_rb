@@ -1,17 +1,16 @@
 require 'spec_helper'
 
 module Mhtml
-  RSpec.describe Document do
-    let(:doc) { Fixture.new(Document) }
+  RSpec.describe RootDocument do
+    let(:fixture) { Fixture.new(RootDocument) }
+    let(:doc) { fixture.instance }
 
     describe '#new' do
-      it 'reads the header' do
-        expect(doc.header.boundary).to eq(header.boundary)
-        expect(doc.header.body).to eq(header.body)
-        expect(doc.header.http_headers.length).to eq(header.http_headers.length)
+      it 'reads the headers' do
+        expect(doc.headers.length).to eq(fixture.headers.length)
 
-        doc.header.http_headers.each_with_index do |actual_header, header_index|
-          expected_header = header.http_headers[header_index]
+        doc.headers.each_with_index do |actual_header, header_index|
+          expected_header = fixture.headers[header_index]
           expect(actual_header.key).to eq(expected_header.key)
           expect(actual_header.values.length).to eq(expected_header.values.length)
 
@@ -22,16 +21,24 @@ module Mhtml
         end
       end
 
+      it 'reads the boundary' do        
+        expect(doc.boundary).to eq(fixture.boundary)
+      end
+
+      it 'reads the body' do        
+        expect(doc.body).to eq(fixture.body)
+      end
+
       it 'reads the sub-documents' do
-        expect(doc.sub_docs.length).to eq(sub_docs.length)
+        expect(doc.sub_docs.length).to eq(fixture.sub_docs.length)
 
         doc.sub_docs.each_with_index do |actual_sub, sub_index|
-          expected_sub = sub_docs[sub_index]
+          expected_sub = fixture.sub_docs[sub_index]
           expect(actual_sub.body).to eq(expected_sub.body)
-          expect(actual_sub.http_headers.length).to eq(expected_sub.http_headers.length)
+          expect(actual_sub.headers.length).to eq(expected_sub.headers.length)
 
-          actual_sub.http_headers.each_with_index do |actual_header, header_index|
-            expected_header = expected_sub.http_headers[header_index]
+          actual_sub.headers.each_with_index do |actual_header, header_index|
+            expected_header = expected_sub.headers[header_index]
             expect(actual_header.key).to eq(expected_header.key)
             expect(actual_header.values.length).to eq(expected_header.values.length)
 
