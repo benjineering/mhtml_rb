@@ -6,5 +6,9 @@ module Mhtml
     def initialize(str)
       
     end
+
+    def <<(data)
+      
+    end
   end
 end

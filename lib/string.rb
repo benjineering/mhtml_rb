@@ -1,4 +1,5 @@
 class String
+  
   def each_index(x)
     raise 'Block required' unless block_given?
     return if empty? || x.nil?

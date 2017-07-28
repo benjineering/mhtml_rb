@@ -49,6 +49,10 @@ module Mhtml
           end
         end
       end
+
+      describe '#<<' do
+        skip 'TODO'
+      end
     end
   end
 end
