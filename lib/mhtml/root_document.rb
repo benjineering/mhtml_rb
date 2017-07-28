@@ -8,7 +8,7 @@ module Mhtml
     end
 
     def <<(chunk)
-
+      #TODO
     end
   end
 end
