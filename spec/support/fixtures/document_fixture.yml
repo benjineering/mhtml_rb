@@ -1,0 +1,40 @@
+raw: |
+  Content-Type: text/html;
+    charset="windows-1252"
+  Content-Transfer-Encoding: quoted-printable
+  Content-Location: http://localhost:3000/
+
+  <!DOCTYPE html><html><head>
+  <meta http-equiv=3D"content-type" content=3D"text/html; charset=3Dwindows-1=
+  252">
+    <title>Test Doc</title>
+  </head>
+  <body>
+    <img src=3D"http://localhost:3000/dot.png">
+
+
+  </body></html>
+
+document:
+  - headers:
+    - key: 'Content-Type'
+      values:
+        - value: 'text/html'
+        - key: 'charset'
+          value: 'windows-1252'
+    - key: 'Content-Transfer-Encoding'
+      values: 
+        - value: 'quoted-printable'
+    - key: 'Content-Location'
+      values:
+        - value: 'http://localhost:3000/'
+    body: |
+      <!DOCTYPE html><html><head>
+      <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+        <title>Test Doc</title>
+      </head>
+      <body>
+        <img src="http://localhost:3000/dot.png">
+
+
+      </body></html>

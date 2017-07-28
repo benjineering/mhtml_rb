@@ -80,12 +80,11 @@ root_document:
           - value: 'http://localhost:3000/'
       body: |
         <!DOCTYPE html><html><head>
-        <meta http-equiv=3D"content-type" content=3D"text/html; charset=3Dwindows-1=
-        252">
+        <meta http-equiv="content-type" content="text/html; charset=windows-1252">
           <title>Test Doc</title>
         </head>
         <body>
-          <img src=3D"http://localhost:3000/dot.png">
+          <img src="http://localhost:3000/dot.png">
 
 
         </body></html>
