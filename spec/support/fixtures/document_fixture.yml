@@ -16,7 +16,7 @@ raw: |
   </body></html>
 
 document:
-  - headers:
+  headers:
     - key: 'Content-Type'
       values:
         - value: 'text/html'
@@ -28,13 +28,13 @@ document:
     - key: 'Content-Location'
       values:
         - value: 'http://localhost:3000/'
-    body: |
-      <!DOCTYPE html><html><head>
-      <meta http-equiv="content-type" content="text/html; charset=windows-1252">
-        <title>Test Doc</title>
-      </head>
-      <body>
-        <img src="http://localhost:3000/dot.png">
+  body: |
+    <!DOCTYPE html><html><head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+      <title>Test Doc</title>
+    </head>
+    <body>
+      <img src="http://localhost:3000/dot.png">
 
 
-      </body></html>
+    </body></html>

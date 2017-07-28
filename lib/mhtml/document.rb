@@ -7,7 +7,7 @@ module Mhtml
       
     end
 
-    def <<(data)
+    def <<(chunk)
       
     end
   end

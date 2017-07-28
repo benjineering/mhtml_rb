@@ -12,7 +12,7 @@ class Fixture
     filename = "#{class_name}_fixture.yml"
     path = "#{FIXTURES_ROOT}/#{filename}"
     yaml = YAML.load_file(path)
-
+    
     @data = yaml[class_name].attr_hash
     @yaml = yaml.attr_hash
     @instance = klass.new(@yaml.raw)

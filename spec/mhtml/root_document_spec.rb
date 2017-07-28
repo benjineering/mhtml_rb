@@ -49,10 +49,16 @@ module Mhtml
           end
         end
       end
+    end
 
-      describe '#<<' do
-        skip 'TODO'
-      end
+    describe '#<<' do
+      skip 'yields the headers'
+
+      skip 'sets the boundary'
+
+      skip 'yields the body'
+
+      skip 'yields the sub-documents'
     end
   end
 end
