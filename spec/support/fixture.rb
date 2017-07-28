@@ -3,7 +3,7 @@ class Fixture
 
   FIXTURES_ROOT = "#{__dir__}/fixtures"
 
-  DEFAULT_CHUNK_SIZE = 512
+  DEFAULT_CHUNK_SIZE = 256
 
   attr_reader :yaml, :instance, :data
 

@@ -3,9 +3,10 @@ require 'spec_helper'
 module Mhtml
   RSpec.describe RootDocument do
     let(:fixture) { Fixture.new(RootDocument) }
-    let(:doc) { fixture.instance }
 
     describe '#new' do
+      let(:doc) { fixture.instance }
+
       it 'reads the headers' do
         expect(doc.headers.length).to eq(fixture.headers.length)
 
@@ -25,7 +26,7 @@ module Mhtml
         expect(doc.boundary).to eq(fixture.boundary)
       end
 
-      it 'reads the body' do        
+      it 'reads and decodes the body' do        
         expect(doc.body).to eq(fixture.body)
       end
 
@@ -52,13 +53,35 @@ module Mhtml
     end
 
     describe '#<<' do
-      skip 'yields the headers'
+      it 'yields the headers as arrays' do
+        headers = []
+        doc = RootDocument.new(-> h { headers += h })
+
+        fixture.chunks do |chunk|
+          doc << chunk
+        end
+
+        headers.each_with_index do |actual_header, header_index|
+          expected_header = fixture.headers[header_index]
+          expect(actual_header.key).to eq(expected_header.key)
+          expect(actual_header.values.length).to eq(expected_header.values.length)
+
+          actual_header.values.each_with_index do |actual_value, value_index|
+            expected_value = actual_header.values[value_index]
+            expect(actual_value).to eq(expected_value)
+          end
+        end
+      end
 
       skip 'sets the boundary'
 
-      skip 'yields the body'
+      it 'yields the body in chunks' do
+        body = ''
+        doc = RootDocument.new(-> h { }, -> b { body += b })
+        expect(body).to eq(fixture.body)
+      end
 
-      skip 'yields the sub-documents'
+      skip 'yields the sub-documents as arrays'
     end
   end
 end

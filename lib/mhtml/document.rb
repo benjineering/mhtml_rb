@@ -3,7 +3,7 @@ module Mhtml
 
     attr_reader :headers, :body
 
-    def initialize(str)
+    def initialize(str_or_headers_proc, body_proc = nil)
       
     end
 
