@@ -36,9 +36,6 @@ class Fixture
 
     loop do
       yield @yaml.raw[range]
-
-      puts range
-
       break if range.last + 1 == @yaml.raw.length
       first = range.last + 1
       last = range_end.call(range.last + chunk_size)
