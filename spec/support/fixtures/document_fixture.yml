@@ -1,19 +1,4 @@
-raw: |
-  Content-Type: text/html;
-    charset="windows-1252"
-  Content-Transfer-Encoding: quoted-printable
-  Content-Location: http://localhost:3000/
-
-  <!DOCTYPE html><html><head>
-  <meta http-equiv=3D"content-type" content=3D"text/html; charset=3Dwindows-1=
-  252">
-    <title>Test Doc</title>
-  </head>
-  <body>
-    <img src=3D"http://localhost:3000/dot.png">
-
-
-  </body></html>
+source: 'source/document.mht'
 
 document:
   headers:

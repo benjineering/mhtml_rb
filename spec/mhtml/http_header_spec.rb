@@ -11,7 +11,7 @@ module Mhtml
       end
 
       it 'reads the header values' do
-        expect(header.values.length).to eq(2)
+        expect(header.values.length).to eq(fixture.values.length)
 
         header.values.each_with_index do |actual, index|
           expected = fixture.values[index]

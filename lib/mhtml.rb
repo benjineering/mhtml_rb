@@ -1,7 +1,7 @@
 
 module Mhtml
-  LINE_BREAK = /\r?\n/
-  DOUBLE_LINE_BREAK = /\r?\n\r?\n/
+  LINE_BREAK = "\r\n"
+  DOUBLE_LINE_BREAK = "#{LINE_BREAK}#{LINE_BREAK}"
 end
 
 require 'mhtml/document'

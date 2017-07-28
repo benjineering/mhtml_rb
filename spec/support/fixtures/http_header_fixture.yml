@@ -1,8 +1,10 @@
-raw: 'Content-Type: multipart/related; boundary="----=_NextPart_01C74319.B7EA56A0"'
+source: 'source/header.txt'
 
 http_header:
   key: 'Content-Type'
   values:
     - value: 'multipart/related'
+    - key: 'charset'
+      value: 'windows-1252'
     - key: 'boundary'
       value: '----=_NextPart_01C74319.B7EA56A0'
