@@ -4,6 +4,9 @@ module Mhtml
 
     attr_accessor :key, :values
 
+    KEY_VALUE_SEP = ':'.freeze
+    VALUE_SEP = ';'.freeze
+
     def initialize(str)
       raise 'String is nil or empty' if str.nil? || str.strip.empty?
 
@@ -11,7 +14,7 @@ module Mhtml
       str.strip!
 
       parts = str.match(/\A
-        (?<key>.+):\s
+        (?<key>.+)#{KEY_VALUE_SEP}\s
         (?<values>.+)
       \Z/x)
 
@@ -22,7 +25,7 @@ module Mhtml
       @key = parts['key']
       @values = []
 
-      parts['values'].split(';').each do |val_str|
+      parts['values'].split(VALUE_SEP).each do |val_str|
         val_str.strip!
         val = Value.new(val_str)
 
@@ -35,6 +38,11 @@ module Mhtml
 
       def ==(other)
         self.class == other.class && @key = other.key && @values == other.values
+      end
+
+      # for testing only = no spec implemented
+      def to_s
+        "#{@key}#{KEY_VALUE_SEP} #{@values.join(VALUE_SEP + ' ')}"
       end
     end
     
@@ -58,6 +66,15 @@ module Mhtml
 
       def ==(other)
         self.class == other.class && @key == other.key && @value == other.value
+      end
+
+      # for testing only = no spec implemented
+      def to_s
+        if @key.nil?
+          @value
+        else
+          %Q(#{@key}="#{@value}")
+        end
       end
     end
   end

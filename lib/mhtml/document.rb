@@ -31,5 +31,10 @@ module Mhtml
     def ==(other)
       @headers == other.headers && @body == other.body
     end
+
+    # for testing only = no spec implemented
+    def to_s
+      @headers.join(LINE_BREAK) + Mhtml::DOUBLE_LINE_BREAK + @body
+    end
   end
 end
