@@ -8,18 +8,7 @@ module Mhtml
       let(:doc) { fixture.instance }
 
       it 'reads the headers' do
-        expect(doc.headers.length).to eq(fixture.headers.length)
-
-        doc.headers.each_with_index do |actual_header, header_index|
-          expected_header = fixture.headers[header_index]
-          expect(actual_header.key).to eq(expected_header.key)
-          expect(actual_header.values.length).to eq(expected_header.values.length)
-
-          actual_header.values.each_with_index do |actual_value, value_index|
-            expected_value = actual_header.values[value_index]
-            expect(actual_value).to eq(expected_value)
-          end
-        end
+        expect(doc.headers).to eq(fixture.headers)
       end
 
       it 'reads the boundary' do        
@@ -31,69 +20,37 @@ module Mhtml
       end
 
       it 'reads the sub-documents' do
-        expect(doc.sub_docs.length).to eq(fixture.sub_docs.length)
-
-        doc.sub_docs.each_with_index do |actual_sub, sub_index|
-          expected_sub = fixture.sub_docs[sub_index]
-          expect(actual_sub.body).to eq(expected_sub.body)
-          expect(actual_sub.headers.length).to eq(expected_sub.headers.length)
-
-          actual_sub.headers.each_with_index do |actual_header, header_index|
-            expected_header = expected_sub.headers[header_index]
-            expect(actual_header.key).to eq(expected_header.key)
-            expect(actual_header.values.length).to eq(expected_header.values.length)
-
-            actual_header.values.each_with_index do |actual_value, value_index|
-              expected_value = actual_header.values[value_index]
-              expect(actual_value).to eq(expected_value)
-            end
-          end
-        end
+        expect(doc.sub_docs).to eq(fixture.sub_docs)
       end
     end
 
     describe '#<<' do
+      def read_doc(header_proc, body_proc = nil, sub_doc_proc = nil)
+        doc = RootDocument.new(header_proc, body_proc, sub_doc_proc)
+        fixture.chunks { |chunk| doc << chunk }
+        doc
+      end
+
       it 'yields the headers as arrays' do
         headers = []
-        doc = RootDocument.new(-> h { headers += h })
-        fixture.chunks { |chunk| doc << chunk }
-
-        headers.each_with_index do |actual_header, header_index|
-          expected_header = fixture.headers[header_index]
-          expect(actual_header.key).to eq(expected_header.key)
-          expect(actual_header.values.length).to eq(expected_header.values.length)
-
-          actual_header.values.each_with_index do |actual_value, value_index|
-            expected_value = actual_header.values[value_index]
-            expect(actual_value).to eq(expected_value)
-          end
-        end
+        read_doc(-> h { headers += h })
+        expect(headers).to eq(fixture.headers)
       end
 
       it 'sets the boundary' do
-        doc = RootDocument.new(-> h { })
-        fixture.chunks { |chunk| doc << chunk }
-        expect(doc.boundary).to eq(fixture.boundary)
+        expect(read_doc.boundary).to eq(fixture.boundary)
       end
 
       it 'yields the decoded body in chunks' do
         body = ''
-        doc = RootDocument.new(-> h { }, -> b { body += b })
-        fixture.chunks { |chunk| doc << chunk }
-
+        read_doc(-> h { }, -> b { body += b })
         expect(body).to eq(fixture.body)
       end
 
       it 'yields the sub-documents as arrays' do
         sub_docs = []
-        doc = RootDocument.new(-> h { }, -> b { }, -> s { sub_docs << s })
-        fixture.chunks { |chunk| doc << chunk }
-
-        expect(sub_docs.length).to eq(fixture.sub_docs.length)
-
-        sub_docs.each_with_index do |actual_doc, doc_index|
-          expect(actual_doc).to eq(fixture.sub_docs[doc_index])
-        end
+        read_doc(-> h { }, -> b { }, -> s { sub_docs << s })
+        expect(sub_docs).to eq(fixture.sub_docs)
       end
     end
 
