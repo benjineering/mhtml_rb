@@ -70,22 +70,21 @@ module Mhtml
         end
       end
 
-      it 'sets the boundary after the headers are yielded' do
-        doc = RootDocument.new(-> h { }, -> b { 
-          expect(doc.boundary).to eq(fixture.boundary)
-          break
-        })
-
-        fixture.chunks { |chunk| doc << chunk }        
+      it 'sets the boundary' do
+        doc = RootDocument.new(-> h { })
+        fixture.chunks { |chunk| doc << chunk }
+        expect(doc.boundary).to eq(fixture.boundary)
       end
 
       it 'yields the decoded body in chunks' do
         body = ''
         doc = RootDocument.new(-> h { }, -> b { body += b })
+        fixture.chunks { |chunk| doc << chunk }
+
         expect(body).to eq(fixture.body)
       end
 
-      skip 'yields the sub-documents as arrays' do
+      it 'yields the sub-documents as arrays' do
         sub_docs = []
         doc = RootDocument.new(-> h { }, -> b { }, -> s { sub_docs << s })
         fixture.chunks { |chunk| doc << chunk }
@@ -93,9 +92,7 @@ module Mhtml
         expect(sub_docs.length).to eq(fixture.sub_docs.length)
 
         sub_docs.each_with_index do |actual_doc, doc_index|
-          expected_doc = fixture.sub_docs[doc_index]
-          
-
+          expect(actual_doc).to eq(fixture.sub_docs[doc_index])
         end
       end
     end
