@@ -37,7 +37,7 @@ module Mhtml
       end
 
       def ==(other)
-        self.class == other.class && @key = other.key && @values == other.values
+        self.class == other.class && @key == other.key && @values == other.values
       end
 
       # for testing only = no spec implemented

@@ -67,7 +67,7 @@ module Mhtml
         b = Document.new(fixture.source_file.read)
         b.headers.last.key = 'a different key'
 
-        expect(a).to_not eq(b)
+        expect(a).not_to eq(b)
       end
 
       it 'returns false if the body is different' do        
@@ -75,7 +75,7 @@ module Mhtml
         b = Document.new(fixture.source_file.read)
         b.body[0, 3] = 'XXXX'
 
-        expect(a).to_not eq(b)
+        expect(a).not_to eq(b)
       end
     end
   end
