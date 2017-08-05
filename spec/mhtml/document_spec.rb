@@ -8,18 +8,7 @@ module Mhtml
       let(:doc) { fixture.instance }
 
       it 'reads the headers' do
-        expect(doc.headers.length).to eq(fixture.headers.length)
-
-        doc.headers.each_with_index do |actual_header, header_index|
-          expected_header = fixture.headers[header_index]
-          expect(actual_header.key).to eq(expected_header.key)
-          expect(actual_header.values.length).to eq(expected_header.values.length)
-
-          actual_header.values.each_with_index do |actual_value, value_index|
-            expected_value = actual_header.values[value_index]
-            expect(actual_value).to eq(expected_value)
-          end
-        end
+        expect(doc.headers).to eq(fixture.headers)
       end
 
       it 'reads and decodes the body' do        
@@ -28,29 +17,21 @@ module Mhtml
     end
 
     describe '#<<' do
+      def read_doc(header_proc, body_proc = nil)
+        doc = Document.new(header_proc, body_proc)
+        fixture.chunks { |chunk| doc << chunk }
+        doc
+      end
+
       it 'yields the headers as arrays' do
         headers = []
-        doc = Document.new(-> h { headers += h })
-
-        fixture.chunks do |chunk|
-          doc << chunk
-        end
-
-        headers.each_with_index do |actual_header, header_index|
-          expected_header = fixture.headers[header_index]
-          expect(actual_header.key).to eq(expected_header.key)
-          expect(actual_header.values.length).to eq(expected_header.values.length)
-
-          actual_header.values.each_with_index do |actual_value, value_index|
-            expected_value = actual_header.values[value_index]
-            expect(actual_value).to eq(expected_value)
-          end
-        end
+        read_doc(-> h { headers += h })
+        expect(headers).to eq(fixture.headers)
       end
 
       it 'yields the decoded body in chunks' do
         body = ''
-        doc = Document.new(-> h { }, -> b { body += b })
+        read_doc(-> h { }, -> b { body += b })
         expect(body).to eq(fixture.body)
       end
     end

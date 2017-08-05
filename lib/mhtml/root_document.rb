@@ -20,7 +20,7 @@ module Mhtml
     # for testing only = no spec implemented
     def to_s
       doc_sep = Mhtml::DOUBLE_LINE_BREAK + BOUNDARY_PREFIX + @boundary + 
-      Mhtml::LINE_BREAK
+        Mhtml::LINE_BREAK
 
       super + doc_sep + @sub_docs.join(doc_sep)
     end
