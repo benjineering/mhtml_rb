@@ -2,7 +2,7 @@ module Mhtml
   class HttpHeader
     require 'string'
 
-    attr_reader :key, :values
+    attr_accessor :key, :values
 
     def initialize(str)
       raise 'String is nil or empty' if str.nil? || str.strip.empty?

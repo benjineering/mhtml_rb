@@ -79,7 +79,7 @@ module Mhtml
         fixture.chunks { |chunk| doc << chunk }        
       end
 
-      it 'yields the body in chunks' do
+      it 'yields the decoded body in chunks' do
         body = ''
         doc = RootDocument.new(-> h { }, -> b { body += b })
         expect(body).to eq(fixture.body)
@@ -105,7 +105,19 @@ module Mhtml
 
       end
 
-      skip 'returns false if any headers, body, boundary or sub-docs are different' do
+      skip 'returns false if any headers different' do
+
+      end
+
+      skip 'returns false if body is different' do
+
+      end
+
+      skip 'returns false if boundary is different' do
+
+      end
+
+      skip 'returns false if sub-docs are different' do
 
       end
     end

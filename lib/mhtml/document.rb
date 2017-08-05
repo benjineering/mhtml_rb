@@ -1,6 +1,6 @@
 module Mhtml
   class Document
-    attr_reader :headers, :body
+    attr_accessor :headers, :body
 
     def initialize(str_or_headers_proc, body_proc = nil)
       if str_or_headers_proc.is_a?(String)
@@ -10,9 +10,7 @@ module Mhtml
         body_pos = str.index(Mhtml::DOUBLE_LINE_BREAK)
 
         header_str = str[0..body_pos].strip
-        header_str.gsub!(/\r?\n\s+/, "\r\n") # handle multiline headers
-
-        puts header_str
+        header_str.gsub!(/\r?\n\s+/, " ") # handle multiline headers
 
         header_str.split(Mhtml::LINE_BREAK).each do |line|
           @headers << HttpHeader.new(line)       
