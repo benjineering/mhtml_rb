@@ -22,17 +22,15 @@ module Mhtml
     end
 
     describe '#==' do
+      let(:a) { fixture.instance }
+      let(:b) { fixture.instance }
+      
       it 'returns true if all keys and values are equal' do
-        a = HttpHeader.new(fixture.source_file.read)
-        b = HttpHeader.new(fixture.source_file.read)
         expect(a).to eq(b)
       end
 
       it 'returns false if key or any values are different' do
-        a = HttpHeader.new(fixture.source_file.read)
-        b = HttpHeader.new(fixture.source_file.read)
         a.values[0] = 'some other value'
-
         expect(a).not_to eq(b)
       end
     end

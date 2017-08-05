@@ -56,25 +56,20 @@ module Mhtml
     end
 
     describe '#==' do
+      let(:a) { fixture.instance }
+      let(:b) { fixture.instance }
+
       it 'returns true if all headers and body are equal' do
-        a = Document.new(fixture.source_file.read)
-        b = Document.new(fixture.source_file.read)
         expect(a).to eq(b)
       end
 
-      it 'returns false if any headers different' do        
-        a = Document.new(fixture.source_file.read)
-        b = Document.new(fixture.source_file.read)
+      it 'returns false if any headers different' do
         b.headers.last.key = 'a different key'
-
         expect(a).not_to eq(b)
       end
 
-      it 'returns false if the body is different' do        
-        a = Document.new(fixture.source_file.read)
-        b = Document.new(fixture.source_file.read)
-        b.body[0, 3] = 'XXXX'
-
+      it 'returns false if the body is different' do
+        b.body[0, 4] = 'XXXX'
         expect(a).not_to eq(b)
       end
     end

@@ -101,24 +101,31 @@ module Mhtml
     end
 
     describe '#==' do
-      skip 'returns true if all headers, body, boundary and sub-docs are equal' do
+      let(:a) { fixture.instance }
+      let(:b) { fixture.instance }
 
+      it 'returns true if all headers, body, boundary and sub-docs are equal' do
+        expect(a).to eq(b)
       end
 
-      skip 'returns false if any headers different' do
-
+      it 'returns false if any headers are different' do
+        b.headers.last.key = 'p00ts'
+        expect(a).not_to eq(b)
       end
 
-      skip 'returns false if body is different' do
-
+      it 'returns false if body is different' do
+        a.body += '$%'
+        expect(a).not_to eq(b)
       end
 
-      skip 'returns false if boundary is different' do
-
+      it 'returns false if boundary is different' do
+        b.boundary = ';-)' + b.boundary
+        expect(a).not_to eq(b)
       end
 
-      skip 'returns false if sub-docs are different' do
-
+      it 'returns false if sub-docs are different' do
+        a.sub_docs.pop
+        expect(a).not_to eq(b)
       end
     end
   end
