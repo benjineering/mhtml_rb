@@ -54,5 +54,15 @@ module Mhtml
         expect(body).to eq(fixture.body)
       end
     end
+
+    describe '#==' do
+      skip 'returns true if all headers and body are equal' do
+
+      end
+
+      skip 'returns false if any headers or the body are different' do
+
+      end
+    end
   end
 end

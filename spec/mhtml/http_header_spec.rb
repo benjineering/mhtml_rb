@@ -20,5 +20,15 @@ module Mhtml
         end
       end
     end
+
+    describe '#==' do
+      skip 'returns true if all keys and values are equal' do
+
+      end
+
+      skip 'returns false if key or any values are different' do
+
+      end
+    end
   end
 end

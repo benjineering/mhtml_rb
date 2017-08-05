@@ -29,5 +29,9 @@ module Mhtml
     def <<(chunk)
       #TODO
     end
+
+    def ==(other)
+      @headers == other.headers && @body == other.body
+    end
   end
 end

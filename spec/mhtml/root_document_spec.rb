@@ -56,10 +56,7 @@ module Mhtml
       it 'yields the headers as arrays' do
         headers = []
         doc = RootDocument.new(-> h { headers += h })
-
-        fixture.chunks do |chunk|
-          doc << chunk
-        end
+        fixture.chunks { |chunk| doc << chunk }
 
         headers.each_with_index do |actual_header, header_index|
           expected_header = fixture.headers[header_index]
@@ -73,7 +70,14 @@ module Mhtml
         end
       end
 
-      skip 'sets the boundary'
+      it 'sets the boundary after the headers are yielded' do
+        doc = RootDocument.new(-> h { }, -> b { 
+          expect(doc.boundary).to eq(fixture.boundary)
+          break
+        })
+
+        fixture.chunks { |chunk| doc << chunk }        
+      end
 
       it 'yields the body in chunks' do
         body = ''
@@ -81,7 +85,29 @@ module Mhtml
         expect(body).to eq(fixture.body)
       end
 
-      skip 'yields the sub-documents as arrays'
+      skip 'yields the sub-documents as arrays' do
+        sub_docs = []
+        doc = RootDocument.new(-> h { }, -> b { }, -> s { sub_docs << s })
+        fixture.chunks { |chunk| doc << chunk }
+
+        expect(sub_docs.length).to eq(fixture.sub_docs.length)
+
+        sub_docs.each_with_index do |actual_doc, doc_index|
+          expected_doc = fixture.sub_docs[doc_index]
+          
+
+        end
+      end
+    end
+
+    describe '#==' do
+      skip 'returns true if all headers, body, boundary and sub-docs are equal' do
+
+      end
+
+      skip 'returns false if any headers, body, boundary or sub-docs are different' do
+
+      end
     end
   end
 end

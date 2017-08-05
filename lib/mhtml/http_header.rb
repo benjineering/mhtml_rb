@@ -32,6 +32,10 @@ module Mhtml
 
         @values << val
       end
+
+      def ==(other)
+        self.class == other.class && @key = other.key && @values == other.values
+      end
     end
     
     class Value
@@ -50,6 +54,10 @@ module Mhtml
         else
           str[split_i + 1, str.length - 1].strip.strip_other('"')
         end
+      end
+
+      def ==(other)
+        self.class == other.class && @key == other.key && @value == other.value
       end
     end
   end
