@@ -7,30 +7,23 @@ module Mhtml
     KEY_VALUE_SEP = ':'.freeze
     VALUE_SEP = ';'.freeze
 
-    def initialize(str)
-      raise 'String is nil or empty' if str.nil? || str.strip.empty?
-
-      str.gsub!(/\s+/, ' ')
-      str.strip!
-
-      parts = str.match(/\A
-        (?<key>.+)#{KEY_VALUE_SEP}\s
-        (?<values>.+)
-      \Z/x)
-
-      if parts.nil? || parts['key'].nil? || parts['values'].nil?
-        raise "Invalid string:\n#{str}"
+    def initialize(key_or_hash, value_lines = nil)
+      if key_or_hash.is_a?(Hash)
+        @key = key_or_hash[:key]
+        @values = key_or_hash[:values]
+        return
       end
 
-      @key = parts['key']
+      @key = key_or_hash
       @values = []
+      values_str = value_lines.join('')
 
-      parts['values'].split(VALUE_SEP).each do |val_str|
+      values_str.split(VALUE_SEP).each do |val_str|
         val_str.strip!
         val = Value.new(val_str)
 
         if val.nil?
-          raise "Invalid value:\n#{val_str}\n\nFrom string:\n#{str}"
+          raise "Invalid value:\n#{val_str}\n\nFrom string:\n#{val_str}"
         end
 
         @values << val
@@ -40,19 +33,31 @@ module Mhtml
         @key == other.key && @values == other.values
       end
 
-      # for testing only = no spec implemented
+      # following methods are for debugging only - no spec implemented
       def to_s
         "#{@key}#{KEY_VALUE_SEP} #{@values.join(VALUE_SEP + ' ')}"
       end
+
+      def clone
+        vals = @values.collect { |v| v.clone }
+        HttpHeader.new(key: @key.clone, values: vals)
+      end
     end
-    
+
     class Value
       attr_reader :key, :value
 
       # str examples:
       # value
       # key="value"
-      def initialize(str)
+      def initialize(str_or_hash)
+        if str_or_hash.is_a?(Hash)
+          @key = str_or_hash[:key]
+          @value = str_or_hash[:value]
+          return
+        end
+
+        str = str_or_hash
         split_i = str.index('=')
         @key = str[0, split_i].strip unless split_i.nil?
 
@@ -68,13 +73,17 @@ module Mhtml
         @key == other.key && @value == other.value
       end
 
-      # for testing only = no spec implemented
+      # following methods are for debugging only - no spec implemented
       def to_s
         if @key.nil?
           @value
         else
-          %Q(#{@key}="#{@value}")
+          %Q[#{@key}="#{@value}"]
         end
+      end
+
+      def clone
+        Value.new(key: @key.clone, value: @value.clone)
       end
     end
   end

@@ -3,7 +3,16 @@ require 'spec_helper'
 module Mhtml
   RSpec.describe HttpHeader do
     let(:fixture) { Fixture.new(HttpHeader) }
-    let(:header) { fixture.instance }
+
+    let(:header) do
+      raw = fixture.source_file.read
+      parts = raw.split(/:\s+/)
+      raise "unparsable header in fixture:\n#{raw}" unless parts.length == 2
+
+      key = parts.first
+      value_lines = parts.last.split(Mhtml::LINE_BREAK)
+      HttpHeader.new(key, value_lines)
+    end
     
     describe '#new' do
       it 'reads the header key' do
@@ -16,16 +25,16 @@ module Mhtml
     end
 
     describe '#==' do
-      let(:a) { fixture.instance }
-      let(:b) { fixture.instance }
+      let(:a) { header }
+      let(:b) { a.clone }
       
       it 'returns true if all keys and values are equal' do
         expect(a).to eq(b)
       end
 
       it 'returns false if key or any values are different' do
-        a.values[0] = 'some other value'
-        expect(a).not_to eq(b)
+        b.values[0] = HttpHeader::Value.new(key: 'some-other-thing')
+        expect(b).not_to eq(a)
       end
     end
   end

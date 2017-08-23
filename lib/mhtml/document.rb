@@ -25,7 +25,11 @@ module Mhtml
     end
 
     def <<(chunk)
-      #TODO
+      if !@headers_read
+        
+      else
+
+      end
     end
 
     def ==(other)
