@@ -1,3 +1,5 @@
+require 'http-parser'
+
 module Mhtml
   class Document
     attr_accessor :headers, :body
@@ -25,11 +27,7 @@ module Mhtml
     end
 
     def <<(chunk)
-      if !@headers_read
-        
-      else
-
-      end
+      
     end
 
     def ==(other)

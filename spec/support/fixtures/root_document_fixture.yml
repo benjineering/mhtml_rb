@@ -25,7 +25,7 @@ root_document:
       values:
         - value: 'Produced By MAF V4.1.0'
 
-  boundary: '--=_NextPart_000_0000_CC3AA3A9.09B072C9'
+  boundary: '----=_NextPart_000_0000_CC3AA3A9.09B072C9'
 
   body: 'This is a multi-part message in MIME format.'
 

@@ -3,10 +3,9 @@ require 'spec_helper'
 module Mhtml
   RSpec.describe RootDocument do
     let(:fixture) { Fixture.new(RootDocument) }
+    let(:doc) { fixture.instance }
 
     describe '#new' do
-      let(:doc) { fixture.instance }
-
       it 'reads the headers' do
         expect(doc.headers).to eq(fixture.headers)
       end
@@ -31,14 +30,15 @@ module Mhtml
         doc
       end
 
-      it 'yields the headers as arrays' do
+      it 'yields each header' do
         headers = []
-        read_doc(-> h { headers += h })
+        read_doc(-> h { headers << h })
         expect(headers).to eq(fixture.headers)
       end
 
       it 'sets the boundary' do
-        expect(read_doc.boundary).to eq(fixture.boundary)
+        doc = read_doc(-> h { })
+        expect(doc.boundary).to eq(fixture.boundary)
       end
 
       it 'yields the decoded body in chunks' do
@@ -46,6 +46,8 @@ module Mhtml
         read_doc(-> h { }, -> b { body += b })
         expect(body).to eq(fixture.body)
       end
+
+      skip 'handles a chunk finishing mid-boundary_str'
 
       it 'yields the sub-documents as arrays' do
         sub_docs = []
@@ -80,6 +82,13 @@ module Mhtml
       it 'returns false if sub-docs are different' do
         a.sub_docs.pop
         expect(a).not_to eq(b)
+      end
+    end
+
+    describe '#boundary_str' do
+      it 'returns the full boundary string like \r\n\r\n--boundary\r\n' do
+        expected = "\r\n\r\n--#{fixture.boundary}\r\n"
+        expect(doc.boundary_str).to eq(expected)
       end
     end
   end

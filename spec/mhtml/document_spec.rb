@@ -31,8 +31,10 @@ module Mhtml
 
       it 'yields the decoded body in chunks' do
         body = ''
-        read_doc(-> h { }, -> b { body += b })
+        chunk_count = 0
+        read_doc(-> h { }, -> b { body += b; chunk_count += 1 })
         expect(body).to eq(fixture.body)
+        expect(chunk_count).to be > 1
       end
     end
 
