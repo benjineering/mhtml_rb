@@ -3,12 +3,14 @@ require 'http-parser'
 module Mhtml
   class Document
     attr_accessor :chunked
-    attr_reader :headers, :body
+    attr_reader :headers, :body, :is_quoted_printable, :encoding
 
     def initialize(str_or_headers_proc, body_proc = nil)
       @chunked = !str_or_headers_proc.is_a?(String)
       @header_key = nil
       @header_value_lines = nil
+      @is_quoted_printable = false
+      @encoding = nil
 
       @request = HttpParser::Parser.new_instance { |inst| inst.type = :response }
 
@@ -38,31 +40,6 @@ module Mhtml
 
     def ==(other)
       @headers == other.headers && @body == other.body
-    end
-
-    def encoding
-      h = header('Content-Type')
-      return nil if h.nil?
-
-      v = h.value('charset')
-      return nil if v.nil?
-
-      begin
-        return Encoding.find(v.value)
-      rescue ArgumentError => ex
-      end
-
-      nil
-    end
-
-    def quoted_printable?
-      h = header('Content-Transfer-Encoding')
-      return false if h.nil?
-
-      v = h.values.first
-      return false if v.nil?
-
-      v.value == 'quoted-printable'
     end
 
     def header(key)
@@ -102,6 +79,7 @@ module Mhtml
       if @chunked
         @body_proc.call(decoded) unless @body_proc.nil?
       else
+        @body.force_encoding(@encoding) if @body.empty? && !@encoding.nil?
         @body += decoded
       end
     end
@@ -118,9 +96,22 @@ module Mhtml
         @headers << header unless @chunked
 
         if header.key == 'Content-Type'
-          bound_header = header.value('boundary')
-          @boundary = bound_header.value unless bound_header.nil?
-        end
+          boundary = header.value('boundary')
+          @boundary = boundary.value unless boundary.nil?
+
+          charset = header.value('charset')
+          
+          unless charset.nil?
+            @encoding = Encoding.find(charset.value) rescue nil
+          end
+
+        elsif header.key == 'Content-Transfer-Encoding'
+          value = header.values.first
+
+          if !value.nil? && value.value == 'quoted-printable'
+            @is_quoted_printable = true
+          end
+        end            
 
         @headers_proc.call(header) unless @headers_proc.nil?
 
@@ -130,11 +121,8 @@ module Mhtml
     end
 
     def decode(str)
-      str = str.unpack1('M*') if quoted_printable?
-
-      enc = encoding
-      str = str.force_encoding(enc) unless enc.nil?
-
+      str = str.unpack1('M*') if @is_quoted_printable
+      str = str.force_encoding(@encoding) unless @encoding.nil?
       str
     end
   end

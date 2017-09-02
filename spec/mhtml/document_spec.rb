@@ -11,7 +11,11 @@ module Mhtml
       end
 
       it 'reads and decodes the body' do        
-        expect(doc.body).to eq(fixture.body)
+        expect(doc.body).to eq_body(fixture.body)
+      end
+
+      it 'sets the body encoding' do        
+        expect(doc.body.encoding).to eq(Encoding::WINDOWS_1252)
       end
     end
 
@@ -31,9 +35,15 @@ module Mhtml
       it 'yields the decoded body in chunks' do
         body = ''
         chunk_count = 0
-        read_doc(-> h { }, -> b { body += b; chunk_count += 1 })
-        expect(body).to eq(fixture.body)
+
+        doc = read_doc(-> h { }, -> b {
+          body += b;
+          chunk_count += 1
+        })
+
+        expect(body).to eq_body(fixture.body)
         expect(chunk_count).to be > 1
+        expect(doc.encoding).to eq(Encoding::WINDOWS_1252)
       end
     end
 
@@ -62,10 +72,9 @@ module Mhtml
       end
     end
 
-    describe '#quoted_printable?' do
-      it 'returns true if the "Content-Transfer-Encoding" header is '\
-      '"quoted-printable"' do
-        expect(doc.quoted_printable?).to be(true)
+    describe '#is_quoted_printable' do
+      it 'returns true if Content-Transfer-Encoding is quoted-printable' do
+        expect(doc.is_quoted_printable).to be(true)
       end
     end
 
