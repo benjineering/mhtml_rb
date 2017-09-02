@@ -28,20 +28,33 @@ module Mhtml
 
         @values << val
       end
+    end
 
-      def ==(other)
-        @key == other.key && @values == other.values
+    def ==(other)
+      @key == other.key && @values == other.values
+    end
+
+    def value(key)
+      value = nil
+
+      @values.each do |v|
+        if v.key == key
+          value = v
+          break
+        end
       end
 
-      # following methods are for debugging only - no spec implemented
-      def to_s
-        "#{@key}#{KEY_VALUE_SEP} #{@values.join(VALUE_SEP + ' ')}"
-      end
+      value
+    end
 
-      def clone
-        vals = @values.collect { |v| v.clone }
-        HttpHeader.new(key: @key.clone, values: vals)
-      end
+    # following methods are for debugging only - no spec implemented
+    def to_s
+      "#{@key}#{KEY_VALUE_SEP} #{@values.join(VALUE_SEP + ' ')}"
+    end
+
+    def clone
+      vals = @values.collect { |v| v.clone }
+      HttpHeader.new(key: @key.clone, values: vals)
     end
 
     class Value

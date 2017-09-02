@@ -37,5 +37,16 @@ module Mhtml
         expect(b).not_to eq(a)
       end
     end
+
+    describe '#value' do
+      it 'returns the first value with the passed key' do
+        expected = HttpHeader::Value.new('charset="windows-1252"')
+        expect(header.value('charset')).to eq(expected)
+      end
+
+      it 'returns nil if the key is not present' do
+        expect(header.value('pugs')).to be(nil)
+      end
+    end
   end
 end

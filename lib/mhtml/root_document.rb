@@ -1,18 +1,18 @@
 module Mhtml
   class RootDocument < Document
-    
-    attr_accessor :boundary, :sub_docs
-
     BOUNDARY_PREFIX = '--'.freeze
 
+    attr_accessor :boundary, :sub_docs
+
+
     def initialize(str_or_headers_proc, body_proc = nil, subdocs_proc = nil)
+      @subdoc = nil
+
       if @chunked
         @subdocs_proc = subdocs_proc 
       else
         @subdocs = []
       end
-
-      @subdoc = nil
 
       super(str_or_headers_proc, body_proc)
     end
@@ -22,17 +22,20 @@ module Mhtml
     end
 
     def boundary_str
-      "#{Mhtml::DOUBLE_LINE_BREAK}#{BOUNDARY_PREFIX}#{@boundary}\
-#{Mhtml::LINE_BREAK}"
+      "#{Mhtml::DOUBLE_LINE_BREAK}#{BOUNDARY_PREFIX}#{@boundary}"\
+      "#{Mhtml::LINE_BREAK}"
     end
 
     def handle_body(inst, data)
       parts = super(inst, data)
 
-      # TODO: handle subdocs
       if @body_read || parts.length > 1
-        if @subdoc.nil?
-          @subdoc = Document.new()
+        if @body_read
+          @subdoc << data
+        else
+          parts[1, parts.length - 2].each do |part|
+            @subdoc << part
+          end
         end
       end
     end
@@ -46,16 +49,40 @@ module Mhtml
 
     private
 
-    def handle_subdoc_header(header)
-      if @chunked
-        
-      else
+    def create_subdoc
+      @subdoc = Document.new(
+        -> header { handle_subdoc_header(header) },
+        -> body { handle_subdoc_body(body) }
+      )
+    end
 
+    def handle_subdoc_header(header)
+      create_subdoc if @subdoc.nil?
+
+      if @chunked
+        @subdoc.headers_proc.call(header)
+      else
+        @subdoc.headers << header
       end
     end
 
-    def handle_subdoc_body(str)
+    def handle_subdoc_body(body)
+      create_subdoc if @subdoc.nil?
 
+      if @chunked
+        @subdoc.body_proc.call(body)
+      else
+        @subdoc.body += body
+      end
+    end
+
+    def handle_message_complete(inst)
+      super(inst)
+      
+      unless @subdoc.nil?
+        @subdocs_proc.call(@subdoc)
+        @subdoc = nil
+      end
     end
   end
 end

@@ -51,7 +51,7 @@ module Mhtml
 
       it 'yields the sub-documents as arrays' do
         sub_docs = []
-        read_doc(-> h { }, -> b { }, -> s { sub_docs << s })
+        read_doc(-> h { }, -> b { }, -> s { sub_docs += s })
         expect(sub_docs).to eq(fixture.sub_docs)
       end
     end
