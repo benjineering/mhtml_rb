@@ -21,7 +21,9 @@ module Mhtml
 
     describe '#<<' do
       def read_doc(header_proc, body_proc = nil)
-        doc = Document.new(header_proc, body_proc)
+        doc = Document.new
+        doc.on_header { |h| header_proc.call(h) }
+        doc.on_body { |b| body_proc.call(b) } unless body_proc.nil?
         fixture.chunks { |chunk| doc << chunk }
         doc
       end

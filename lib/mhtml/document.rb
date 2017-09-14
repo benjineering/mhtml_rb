@@ -5,8 +5,8 @@ module Mhtml
     attr_reader :chunked
     attr_accessor :headers, :body, :is_quoted_printable, :encoding
 
-    def initialize(str_or_headers_proc, body_proc = nil)
-      @chunked = !str_or_headers_proc.is_a?(String)
+    def initialize(str = nil)
+      @chunked = !str.is_a?(String)
       @header_key = nil
       @header_value_lines = nil
       @is_quoted_printable = false
@@ -24,13 +24,10 @@ module Mhtml
 
       @parser.parse(@request, Mhtml::STATUS_LINE)
 
-      if @chunked
-        @headers_proc = str_or_headers_proc
-        @body_proc = body_proc
-      else
+      unless @chunked
         @headers = []
         @body = ''
-        @parser.parse(@request, str_or_headers_proc)
+        @parser.parse(@request, str)
       end
     end
 
@@ -40,6 +37,14 @@ module Mhtml
 
     def ==(other)
       @headers == other.headers && @body == other.body
+    end
+
+    def on_header
+      @headers_proc = Proc.new
+    end
+
+    def on_body
+      @body_proc = Proc.new
     end
 
     def header(key)
