@@ -116,7 +116,7 @@ module Mhtml
           if !value.nil? && value.value == 'quoted-printable'
             @is_quoted_printable = true
           end
-        end            
+        end
 
         @headers_proc.call(header) unless @headers_proc.nil?
 

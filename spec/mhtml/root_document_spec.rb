@@ -24,8 +24,20 @@ module Mhtml
     end
 
     describe '#<<' do
-      def read_doc(header_proc, body_proc = nil, sub_doc_proc = nil)
-        doc = RootDocument.new(header_proc, body_proc, sub_doc_proc)
+      def read_doc(
+      header_proc,
+      body_proc = nil,
+      subdoc_begin_proc = nil,
+      subdoc_header_proc = nil,
+      subdoc_body_proc = nil,
+      subdoc_complete_proc = nil)
+        doc = RootDocument.new
+        doc.on_header { |h| header_proc.call(h) }
+        doc.on_body { |b| body_proc.call(b) } unless body_proc.nil?
+        doc.on_subdoc_begin { subdoc_begin_proc.call } unless subdoc_begin_proc.nil?
+        doc.on_subdoc_header { |h| subdoc_header_proc.call(h) } unless subdoc_header_proc.nil?
+        doc.on_subdoc_body { |b| subdoc_body_proc.call(b) } unless subdoc_body_proc.nil?
+        doc.on_subdoc_complete { subdoc_complete_proc.call } unless subdoc_complete_proc.nil?
         fixture.chunks { |chunk| doc << chunk }
         doc
       end
@@ -47,17 +59,19 @@ module Mhtml
         expect(body).to eq(fixture.body)
       end
 
+      skip 'yields nil on subdoc begin'
+
+      skip 'yields subdoc headers'
+
+      skip 'yields subdoc body'
+
+      skip 'yields nil on subdoc end'
+
       skip 'handles a chunk finishing mid-boundary_str'
 
       skip 'handles a chunk finishing mid-quoted printable'
 
       skip 'handles a chunk finishing mid-double linebreak'
-
-      it 'yields the sub-documents as arrays' do
-        sub_docs = []
-        read_doc(-> h { }, -> b { }, -> s { sub_docs += s })
-        expect(sub_docs).to eq(fixture.sub_docs)
-      end
     end
 
     describe '#==' do
