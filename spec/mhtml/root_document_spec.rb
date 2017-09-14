@@ -15,7 +15,7 @@ module Mhtml
       end
 
       it 'reads and decodes the body' do        
-        expect(doc.body).to eq(fixture.body)
+        expect(doc.body.strip).to eq(fixture.body)
       end
 
       it 'reads the sub-documents' do
@@ -56,7 +56,7 @@ module Mhtml
       it 'yields the decoded body in chunks' do
         body = ''
         read_doc(-> h { }, -> b { body += b })
-        expect(body).to eq(fixture.body)
+        expect(body.strip).to eq(fixture.body)
       end
 
       skip 'yields nil on subdoc begin'
@@ -104,8 +104,8 @@ module Mhtml
     end
 
     describe '#boundary_str' do
-      it 'returns the full boundary string like \r\n\r\n--boundary\r\n' do
-        expected = "\r\n\r\n--#{fixture.boundary}\r\n"
+      it 'returns the full boundary string like \r\n--boundary\r\n' do
+        expected = "\r\n--#{fixture.boundary}\r\n"
         expect(doc.boundary_str).to eq(expected)
       end
     end

@@ -5,9 +5,8 @@ module Mhtml
     attr_accessor :boundary, :sub_docs
 
     def initialize(str = nil)
-      super(str)
-      @sub_doc = nil
       @sub_docs = []
+      super(str)
     end
 
     def ==(other)
@@ -31,8 +30,7 @@ module Mhtml
     end
 
     def boundary_str
-      "#{Mhtml::DOUBLE_LINE_BREAK}#{BOUNDARY_PREFIX}#{@boundary}"\
-      "#{Mhtml::LINE_BREAK}"
+      "#{Mhtml::LINE_BREAK}#{BOUNDARY_PREFIX}#{@boundary}#{Mhtml::LINE_BREAK}"
     end
 
     # for testing only = no spec implemented
@@ -53,36 +51,38 @@ module Mhtml
         super(inst, parts.shift)
       end
 
-      if @body_read
-        parts.each do |part|          
-          create_subdoc if @sub_doc.nil?
-          
+      parts.each_with_index do |part, i|          
+        unless @chunked
+
+          @sub_doc = Document.new(part)
+
+          @sub_docs << @sub_doc
+
+
         end
       end
     end
-
+=begin
     def create_subdoc
-      @sub_doc = Document.new
-      @sub_doc.on_subdoc_header { handle_subdoc_header(header) }
-      @sub_doc.on_subdoc_body { handle_subdoc_body(body) }
-    end
+      @sub_doc = @chunked ? Document.new : Document.new('')
 
-    def handle_subdoc_header(header)
-      if @chunked
-        @sub_doc.headers_proc.call(header)
-      else
-        @sub_doc.headers << header
+      @sub_doc.on_header do |header| 
+        if @chunked
+          @subdoc_header_proc.call(header) unless @subdoc_header_proc.nil?
+        else
+          @sub_doc.headers << header
+        end
       end
-    end
 
-    def handle_subdoc_body(body)
-      create_subdoc if @sub_doc.nil?
-
-      if @chunked
-        @sub_doc.body_proc.call(body)
-      else
-        @sub_doc.body += body
+      @sub_doc.on_body do |body|
+        if @chunked
+          @subdoc_body_proc.call(body) unless @subdoc_body_proc.nil?
+        else
+          @sub_doc.body += body
+        end
       end
+
+      #@sub_doc.handle_message_begin { handle_subdoc_body(body) }
     end
 
     def handle_message_complete(inst)
@@ -93,5 +93,6 @@ module Mhtml
         @sub_doc = nil
       end
     end
+=end
   end
 end
