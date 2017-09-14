@@ -34,8 +34,6 @@ module Mhtml
         super(inst, parts.shift)
       end
 
-      byebug
-
       if @body_read
         parts.each do |part|          
           create_subdoc if @subdoc.nil?
