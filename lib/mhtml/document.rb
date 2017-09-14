@@ -2,8 +2,8 @@ require 'http-parser'
 
 module Mhtml
   class Document
-    attr_accessor :chunked
-    attr_reader :headers, :body, :is_quoted_printable, :encoding
+    attr_reader :chunked
+    attr_accessor :headers, :body, :is_quoted_printable, :encoding
 
     def initialize(str_or_headers_proc, body_proc = nil)
       @chunked = !str_or_headers_proc.is_a?(String)

@@ -49,6 +49,10 @@ module Mhtml
 
       skip 'handles a chunk finishing mid-boundary_str'
 
+      skip 'handles a chunk finishing mid-quoted printable'
+
+      skip 'handles a chunk finishing mid-double linebreak'
+
       it 'yields the sub-documents as arrays' do
         sub_docs = []
         read_doc(-> h { }, -> b { }, -> s { sub_docs += s })

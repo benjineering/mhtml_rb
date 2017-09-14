@@ -4,7 +4,6 @@ module Mhtml
 
     attr_accessor :boundary, :sub_docs
 
-
     def initialize(str_or_headers_proc, body_proc = nil, subdocs_proc = nil)
       @subdoc = nil
 
@@ -27,15 +26,20 @@ module Mhtml
     end
 
     def handle_body(inst, data)
-      parts = super(inst, data)
+      maybe_create_header
+      parts = data.split(boundary_str)
 
-      if @body_read || parts.length > 1
-        if @body_read
-          @subdoc << data
-        else
-          parts[1, parts.length - 2].each do |part|
-            @subdoc << part
-          end
+      unless @body_read
+        @body_read = parts.length > 1
+        super(inst, parts.shift)
+      end
+
+      byebug
+
+      if @body_read
+        parts.each do |part|          
+          create_subdoc if @subdoc.nil?
+          
         end
       end
     end
@@ -57,8 +61,6 @@ module Mhtml
     end
 
     def handle_subdoc_header(header)
-      create_subdoc if @subdoc.nil?
-
       if @chunked
         @subdoc.headers_proc.call(header)
       else
