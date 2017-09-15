@@ -39,4 +39,26 @@ class String
     tr("-", "_").
     downcase
   end
+
+  def index_of_split(other)
+    last_idx = (other.length - 1)
+
+    (0..last_idx).step do |i|
+      part = other[i..last_idx]      
+      return part.length - 1 if start_with?(part)
+    end
+
+    nil
+  end
+
+  def rindex_of_split(other)
+    last_idx = (other.length - 1)
+
+    (0..last_idx).step do |i|
+      part = other[0..(last_idx - i)]
+      return length - part.length if end_with?(part)
+    end
+
+    nil
+  end
 end

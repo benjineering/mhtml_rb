@@ -48,6 +48,15 @@ module Mhtml
 
     def handle_body(inst, data)
       maybe_create_header
+
+=begin
+
+if a possible delimiter is saved
+  join onto the start of the data
+  clear the saved delimiter
+end
+
+=end
       parts = data.split(boundary_str)
       
       unless @body_read
@@ -56,13 +65,33 @@ module Mhtml
       end
 
       parts.each_with_index do |part, i|
-        end_boundary_pos = part.index(last_boundary_str)
+        end_boundary_pos = part.rindex(last_boundary_str)
         is_last = !end_boundary_pos.nil?
         part = part[0..(end_boundary_pos - 1)] if is_last
 
         if @chunked
 
-          #@sub_doc = create_chunked_subdoc
+          if @chunked_sub_doc.nil?
+            create_chunked_subdoc
+            @subdoc_begin_proc.call unless @subdoc_begin_proc.nil?
+          end
+
+=begin
+
+if chunk ends with the first part of boundary_str, quoted printable or double line break
+  shovel up to the start of the delimiter
+  save the start of the delimiter
+end
+
+=end
+
+          @chunked_sub_doc << part
+
+          if i + 1 < parts.length || is_last
+            @sub_docs << @chunked_sub_doc
+            @chunked_sub_doc = nil
+            @subdoc_complete_proc.call unless @subdoc_complete_proc.nil?
+          end
 
         else
           @sub_docs << Document.new(part)
@@ -71,27 +100,19 @@ module Mhtml
     end
 
     def create_chunked_subdoc
-      @sub_doc = Document.new
+      @chunked_sub_doc = Document.new
 
-      #@sub_doc.parser.on_message_begin { }
+      #@chunked_sub_doc.parser.on_message_begin { |inst| }
 
-      @sub_doc.on_header do |header| 
-        if @chunked
-          @subdoc_header_proc.call(header) unless @subdoc_header_proc.nil?
-        else
-          @sub_doc.headers << header
-        end
+      @chunked_sub_doc.on_header do |header| 
+        @subdoc_header_proc.call(header) unless @subdoc_header_proc.nil?
       end
 
-      @sub_doc.on_body do |body|
-        if @chunked
-          @subdoc_body_proc.call(body) unless @subdoc_body_proc.nil?
-        else
-          @sub_doc.body += body
-        end
+      @chunked_sub_doc.on_body do |body|
+        @subdoc_body_proc.call(body) unless @subdoc_body_proc.nil?
       end
 
-      #@sub_doc.parser.on_message_complete { }
+      #@chunked_sub_doc.parser.on_message_complete { |inst| }
     end
   end
 end

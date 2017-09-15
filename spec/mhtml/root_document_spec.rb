@@ -26,14 +26,14 @@ module Mhtml
     describe '#<<' do
 
       def read_doc(
-      header_proc,
+      header_proc = nil,
       body_proc = nil,
       subdoc_begin_proc = nil,
       subdoc_header_proc = nil,
       subdoc_body_proc = nil,
       subdoc_complete_proc = nil)
         doc = RootDocument.new
-        doc.on_header { |h| header_proc.call(h) }
+        doc.on_header { |h| header_proc.call(h) } unless header_proc.nil?
         doc.on_body { |b| body_proc.call(b) } unless body_proc.nil?
         doc.on_subdoc_begin { subdoc_begin_proc.call } unless subdoc_begin_proc.nil?
         doc.on_subdoc_header { |h| subdoc_header_proc.call(h) } unless subdoc_header_proc.nil?
@@ -50,23 +50,39 @@ module Mhtml
       end
 
       it 'sets the boundary' do
-        doc = read_doc(-> h { })
+        doc = read_doc
         expect(doc.boundary).to eq(fixture.boundary)
       end
 
       it 'yields the decoded body in chunks' do
         body = ''
-        read_doc(-> h { }, -> b { body += b })
+        read_doc(nil, -> b { body += b })
         expect(body.strip).to eq(fixture.body)
       end
 
-      skip 'yields nil on subdoc begin'
+      it 'yields nil on subdoc begin, then headers, body and nil on subdoc end' do
+        sub_docs = []
 
-      skip 'yields subdoc headers'
+        read_doc(
+          nil,
+          nil,
+          -> { sub_docs << Document.new('') },
+          -> h { sub_docs.last.headers << h },
+          -> b { sub_docs.last.body += b },
+          -> { sub_docs << nil }
+        )
 
-      skip 'yields subdoc body'
+        expect(sub_docs.length).to eq(fixture.sub_docs.length * 2)
 
-      skip 'yields nil on subdoc end'
+        sub_docs.each_with_index do |headers, i|
+          if i.odd?
+            expect(headers).to be(nil)
+          else
+            idx = i == 0 ? 0 : (i + 1) / 2
+            expect(headers).to eq(fixture.sub_docs[idx])
+          end
+        end
+      end
 
       skip 'handles a chunk finishing mid-boundary_str'
 

@@ -2,7 +2,7 @@ require 'http-parser'
 
 module Mhtml
   class Document
-    attr_reader :chunked
+    attr_reader :chunked, :parser
     attr_accessor :headers, :body, :is_quoted_printable, :encoding
 
     def initialize(str = nil)
