@@ -24,6 +24,7 @@ module Mhtml
     end
 
     describe '#<<' do
+
       def read_doc(
       header_proc,
       body_proc = nil,

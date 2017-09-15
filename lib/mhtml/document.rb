@@ -36,7 +36,8 @@ module Mhtml
     end
 
     def ==(other)
-      @headers == other.headers && @body == other.body
+      @headers == other.headers &&
+        @body.gsub(/\r\n/, "\n").strip == other.body.gsub(/\r\n/, "\n").strip
     end
 
     def on_header

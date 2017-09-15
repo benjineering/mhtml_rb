@@ -33,6 +33,10 @@ module Mhtml
       "#{Mhtml::LINE_BREAK}#{BOUNDARY_PREFIX}#{@boundary}#{Mhtml::LINE_BREAK}"
     end
 
+    def last_boundary_str
+      "#{Mhtml::LINE_BREAK}#{BOUNDARY_PREFIX}#{@boundary}#{BOUNDARY_PREFIX}#{Mhtml::LINE_BREAK}"
+    end
+
     # for testing only = no spec implemented
     def to_s
       doc_sep = Mhtml::DOUBLE_LINE_BREAK + BOUNDARY_PREFIX + @boundary + 
@@ -45,26 +49,31 @@ module Mhtml
     def handle_body(inst, data)
       maybe_create_header
       parts = data.split(boundary_str)
-
+      
       unless @body_read
         @body_read = parts.length > 1
         super(inst, parts.shift)
       end
 
-      parts.each_with_index do |part, i|          
-        unless @chunked
+      parts.each_with_index do |part, i|
+        end_boundary_pos = part.index(last_boundary_str)
+        is_last = !end_boundary_pos.nil?
+        part = part[0..(end_boundary_pos - 1)] if is_last
 
-          @sub_doc = Document.new(part)
+        if @chunked
 
-          @sub_docs << @sub_doc
+          #@sub_doc = create_chunked_subdoc
 
-
+        else
+          @sub_docs << Document.new(part)
         end
       end
     end
-=begin
-    def create_subdoc
-      @sub_doc = @chunked ? Document.new : Document.new('')
+
+    def create_chunked_subdoc
+      @sub_doc = Document.new
+
+      #@sub_doc.parser.on_message_begin { }
 
       @sub_doc.on_header do |header| 
         if @chunked
@@ -82,17 +91,7 @@ module Mhtml
         end
       end
 
-      #@sub_doc.handle_message_begin { handle_subdoc_body(body) }
+      #@sub_doc.parser.on_message_complete { }
     end
-
-    def handle_message_complete(inst)
-      super(inst)
-      
-      unless @sub_doc.nil?
-        @subdocs_proc.call(@sub_doc)
-        @sub_doc = nil
-      end
-    end
-=end
   end
 end
