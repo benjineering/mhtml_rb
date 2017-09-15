@@ -31,7 +31,8 @@ module Mhtml
       subdoc_begin_proc = nil,
       subdoc_header_proc = nil,
       subdoc_body_proc = nil,
-      subdoc_complete_proc = nil)
+      subdoc_complete_proc = nil,
+      chunk_size = Fixture::DEFAULT_CHUNK_SIZE)
         doc = RootDocument.new
         doc.on_header { |h| header_proc.call(h) } unless header_proc.nil?
         doc.on_body { |b| body_proc.call(b) } unless body_proc.nil?
@@ -39,8 +40,23 @@ module Mhtml
         doc.on_subdoc_header { |h| subdoc_header_proc.call(h) } unless subdoc_header_proc.nil?
         doc.on_subdoc_body { |b| subdoc_body_proc.call(b) } unless subdoc_body_proc.nil?
         doc.on_subdoc_complete { subdoc_complete_proc.call } unless subdoc_complete_proc.nil?
-        fixture.chunks { |chunk| doc << chunk }
+        fixture.chunks(chunk_size) { |chunk| doc << chunk }
         doc
+      end
+
+      def read_subdocs(include_complete_nils, chunk_size = Fixture::DEFAULT_CHUNK_SIZE)
+        sub_docs = []
+
+        read_doc(
+          nil,
+          nil,
+          -> { sub_docs << Document.new('') },
+          -> h { sub_docs.last.headers << h },
+          -> b { sub_docs.last.body += b },
+          include_complete_nils ? -> { sub_docs << nil } : nil
+        )
+
+        sub_docs
       end
 
       it 'yields each header' do
@@ -61,34 +77,45 @@ module Mhtml
       end
 
       it 'yields nil on subdoc begin, then headers, body and nil on subdoc end' do
-        sub_docs = []
-
-        read_doc(
-          nil,
-          nil,
-          -> { sub_docs << Document.new('') },
-          -> h { sub_docs.last.headers << h },
-          -> b { sub_docs.last.body += b },
-          -> { sub_docs << nil }
-        )
+        sub_docs = read_subdocs(true)
 
         expect(sub_docs.length).to eq(fixture.sub_docs.length * 2)
 
-        sub_docs.each_with_index do |headers, i|
+        sub_docs.each_with_index do |sub_doc, i|
           if i.odd?
-            expect(headers).to be(nil)
+            expect(sub_doc).to be(nil)
           else
             idx = i == 0 ? 0 : (i + 1) / 2
-            expect(headers).to eq(fixture.sub_docs[idx])
+            expect(sub_doc).to eq(fixture.sub_docs[idx])
           end
         end
       end
 
-      skip 'handles a chunk finishing mid-boundary_str'
+      it 'handles a chunk finishing mid-boundary_str' do
+        boundarys_idxs = []
 
-      skip 'handles a chunk finishing mid-quoted printable'
+        fixture.source_file.read.each_index(fixture.boundary) do |i| 
+          boundarys_idxs << i
+        end
 
-      skip 'handles a chunk finishing mid-double linebreak'
+        idx_idx = boundarys_idxs.length - 2
+        chunk_size = idx_idx + fixture.boundary.length / 2
+
+        #puts fixture.source_file.read[0, chunk_size]; byebug
+
+        sub_docs = read_subdocs(false, chunk_size)
+        expect(sub_docs).to eq(fixture.sub_docs)
+      end
+
+      it 'handles a chunk finishing mid-quoted printable' do
+        quoted_idx = fixture.source_file.read.index('=3D')
+        chunk_size = quoted_idx + 2
+
+        #puts fixture.source_file.read[0, chunk_size]; byebug
+
+        sub_docs = read_subdocs(false, chunk_size)
+        expect(sub_docs).to eq(fixture.sub_docs)
+      end
     end
 
     describe '#==' do

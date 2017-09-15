@@ -48,16 +48,14 @@ module Mhtml
 
     def handle_body(inst, data)
       maybe_create_header
+      boundary = boundary_str
 
-=begin
-
-if a possible delimiter is saved
-  join onto the start of the data
-  clear the saved delimiter
-end
-
-=end
-      parts = data.split(boundary_str)
+      unless @split.nil?
+        data = @split + data
+        @split = nil
+      end
+      
+      parts = data.split(boundary)
       
       unless @body_read
         @body_read = parts.length > 1
@@ -66,28 +64,37 @@ end
 
       parts.each_with_index do |part, i|
         end_boundary_pos = part.rindex(last_boundary_str)
-        is_last = !end_boundary_pos.nil?
-        part = part[0..(end_boundary_pos - 1)] if is_last
+        is_last_subdoc = !end_boundary_pos.nil?
+        part = part[0..(end_boundary_pos - 1)] if is_last_subdoc
 
         if @chunked
+          is_last_part = i + 1 == parts.length
 
           if @chunked_sub_doc.nil?
             create_chunked_subdoc
             @subdoc_begin_proc.call unless @subdoc_begin_proc.nil?
           end
 
-=begin
+          if is_last_part
+            split_idx = part.rindex_of_split(boundary)
 
-if chunk ends with the first part of boundary_str, quoted printable or double line break
-  shovel up to the start of the delimiter
-  save the start of the delimiter
-end
+            if split_idx.nil?
+              quoted_matches = part.match(/=[0-9A-F\r\n]{0,2}\Z/)
 
-=end
+              unless quoted_matches.nil?
+                split_idx = part.length - quoted_matches[0].length + 1
+              end              
+            end
+
+            unless split_idx.nil?
+              @split = part[split_idx..(part.length - 1)]
+              part = part[0..(split_idx - 1)]
+            end
+          end
 
           @chunked_sub_doc << part
 
-          if i + 1 < parts.length || is_last
+          unless is_last_part && !is_last_subdoc
             @sub_docs << @chunked_sub_doc
             @chunked_sub_doc = nil
             @subdoc_complete_proc.call unless @subdoc_complete_proc.nil?
