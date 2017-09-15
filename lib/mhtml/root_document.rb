@@ -54,7 +54,7 @@ module Mhtml
         data = @split + data
         @split = nil
       end
-      
+
       parts = data.split(boundary)
       
       unless @body_read
@@ -69,47 +69,47 @@ module Mhtml
 
         if @chunked
           is_last_part = i + 1 == parts.length
-
-          if @chunked_sub_doc.nil?
-            create_chunked_subdoc
-            @subdoc_begin_proc.call unless @subdoc_begin_proc.nil?
-          end
-
-          if is_last_part
-            split_idx = part.rindex_of_split(boundary)
-
-            if split_idx.nil?
-              quoted_matches = part.match(/=[0-9A-F\r\n]{0,2}\Z/)
-
-              unless quoted_matches.nil?
-                split_idx = part.length - quoted_matches[0].length + 1
-              end              
-            end
-
-            unless split_idx.nil?
-              @split = part[split_idx..(part.length - 1)]
-              part = part[0..(split_idx - 1)]
-            end
-          end
-
-          @chunked_sub_doc << part
-
-          unless is_last_part && !is_last_subdoc
-            @sub_docs << @chunked_sub_doc
-            @chunked_sub_doc = nil
-            @subdoc_complete_proc.call unless @subdoc_complete_proc.nil?
-          end
-
+          handle_chunked_body(part, is_last_part, is_last_subdoc)
         else
           @sub_docs << Document.new(part)
         end
       end
     end
 
+    def handle_chunked_body(chunk, is_last_part, is_last_subdoc)
+      if @chunked_sub_doc.nil?
+        create_chunked_subdoc
+        @subdoc_begin_proc.call unless @subdoc_begin_proc.nil?
+      end
+
+      if is_last_part
+        split_idx = chunk.rindex_of_split(boundary_str)
+
+        if split_idx.nil?
+          quoted_matches = chunk.match(/=[0-9A-F\r\n]{0,2}\Z/)
+
+          unless quoted_matches.nil?
+            split_idx = chunk.length - quoted_matches[0].length + 1
+          end              
+        end
+
+        unless split_idx.nil?
+          @split = chunk[split_idx..(chunk.length - 1)]
+          chunk = chunk[0..(split_idx - 1)]
+        end
+      end
+
+      @chunked_sub_doc << chunk
+
+      unless is_last_part && !is_last_subdoc
+        @sub_docs << @chunked_sub_doc
+        @chunked_sub_doc = nil
+        @subdoc_complete_proc.call unless @subdoc_complete_proc.nil?
+      end
+    end
+
     def create_chunked_subdoc
       @chunked_sub_doc = Document.new
-
-      #@chunked_sub_doc.parser.on_message_begin { |inst| }
 
       @chunked_sub_doc.on_header do |header| 
         @subdoc_header_proc.call(header) unless @subdoc_header_proc.nil?
@@ -118,8 +118,6 @@ module Mhtml
       @chunked_sub_doc.on_body do |body|
         @subdoc_body_proc.call(body) unless @subdoc_body_proc.nil?
       end
-
-      #@chunked_sub_doc.parser.on_message_complete { |inst| }
     end
   end
 end
