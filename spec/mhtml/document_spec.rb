@@ -84,13 +84,22 @@ module Mhtml
       it 'returns the first header with the passed key' do
         expected = HttpHeader.new(
           key: 'Content-Location',
-          values: [ HttpHeader::Value.new('http://localhost:3000/') ]
+          values: [ HttpHeader::Value.new('http://localhost:3000/the/file/path.html') ]
         )        
         expect(doc.header('Content-Location')).to eq(expected)
       end
 
       it 'returns nil if the header is not found' do
         expect(doc.header('plorps')).to be(nil)
+      end
+    end
+
+    describe '#relative_file_path' do
+      it "returns a file path from Content-Location relative to the root doc's \
+      Content-Location" do
+        root_doc_str = "Content-Location: http://localhost:3000/\r\n\r\nbodee"
+        doc.root_doc = RootDocument.new(root_doc_str)
+        expect(doc.relative_file_path).to eq('the/file/path.html')
       end
     end
   end

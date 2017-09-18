@@ -3,7 +3,13 @@ require 'http-parser'
 module Mhtml
   class Document
     attr_reader :chunked, :parser
-    attr_accessor :headers, :body, :is_quoted_printable, :encoding
+
+    attr_accessor :headers, 
+      :body, 
+      :is_quoted_printable, 
+      :encoding, 
+      :file_path, 
+      :root_doc
 
     def initialize(str = nil)
       @chunked = !str.is_a?(String)
@@ -59,6 +65,23 @@ module Mhtml
       end
 
       header
+    end
+
+    def relative_file_path
+      return nil if @file_path.nil?
+      return @file_path if @root_doc.nil? || @root_doc.file_path.nil?
+      return '.' if @file_path == @root_doc.file_path
+
+      str = nil
+      if @file_path.start_with?(@root_doc.file_path)
+        start = @root_doc.file_path.length
+        str = @file_path[start..@file_path.length - 1]
+      else
+        str = @file_path
+      end
+
+      str = str[1..(str.length - 1)] if str[0] == '/'
+      str
     end
 
     # for testing only = no spec implemented
@@ -117,6 +140,10 @@ module Mhtml
           if !value.nil? && value.value == 'quoted-printable'
             @is_quoted_printable = true
           end
+        
+        elsif header.key == 'Content-Location'
+          value = header.values.first
+          @file_path = value.value unless value.nil?
         end
 
         @headers_proc.call(header) unless @headers_proc.nil?

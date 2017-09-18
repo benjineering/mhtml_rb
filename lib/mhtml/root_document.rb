@@ -71,7 +71,9 @@ module Mhtml
           is_last_part = i + 1 == parts.length
           handle_chunked_body(part, is_last_part, is_last_subdoc)
         else
-          @sub_docs << Document.new(part)
+          sub_doc = Document.new(part)
+          sub_doc.root_doc = self
+          @sub_docs << sub_doc
         end
       end
     end
@@ -110,6 +112,7 @@ module Mhtml
 
     def create_chunked_subdoc
       @chunked_sub_doc = Document.new
+      @chunked_sub_doc.root_doc = self
 
       @chunked_sub_doc.on_header do |header| 
         @subdoc_header_proc.call(header) unless @subdoc_header_proc.nil?
