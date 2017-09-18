@@ -69,18 +69,24 @@ module Mhtml
 
     def relative_file_path
       return nil if @file_path.nil?
-      return @file_path if @root_doc.nil? || @root_doc.file_path.nil?
       return '.' if @file_path == @root_doc.file_path
 
       str = nil
-      if @file_path.start_with?(@root_doc.file_path)
+
+      if !@root_doc.file_path.nil? && @file_path.start_with?(@root_doc.file_path)
         start = @root_doc.file_path.length
-        str = @file_path[start..@file_path.length - 1]
+        str = @file_path[start..(@file_path.length - 1)]
+
+      elsif @file_path.include?(':')
+        start = @file_path.rindex(':') + 1
+        str = @file_path[start..(@file_path.length - 1)]
+
       else
         str = @file_path
       end
 
       str = str[1..(str.length - 1)] if str[0] == '/'
+
       str
     end
 

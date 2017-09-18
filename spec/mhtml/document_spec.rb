@@ -95,11 +95,22 @@ module Mhtml
     end
 
     describe '#relative_file_path' do
-      it "returns a file path from Content-Location relative to the root doc's \
-      Content-Location" do
-        root_doc_str = "Content-Location: http://localhost:3000/\r\n\r\nbodee"
-        doc.root_doc = RootDocument.new(root_doc_str)
-        expect(doc.relative_file_path).to eq('the/file/path.html')
+      context 'Content-Location is an absolute URL' do
+        it "returns a file path from Content-Location relative to the root doc's \
+        Content-Location" do
+          root_doc_str = "Content-Location: http://localhost:3000/\r\n\r\nbodee"
+          doc.root_doc = RootDocument.new(root_doc_str)
+          expect(doc.relative_file_path).to eq('the/file/path.html')
+        end
+      end
+
+      context 'Content-Location is a Windows file URL and root doc has no \
+      Content-Location' do
+        it 'returns the path relative to the drive' do
+          doc.root_doc = RootDocument.new('')
+          doc.file_path = 'file:///C:/E5879D12/01.TheShoulder.htm'
+          expect(doc.relative_file_path).to eq('E5879D12/01.TheShoulder.htm')
+        end
       end
     end
   end
