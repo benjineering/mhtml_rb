@@ -1,4 +1,5 @@
 require 'http-parser'
+require 'base64'
 
 module Mhtml
   class Document
@@ -167,7 +168,15 @@ module Mhtml
 
     def decode(str)
       str = str.unpack1('M*') if @is_quoted_printable
-      str = Base64.decode64(str) if @is_base_64
+
+      if @is_base_64
+        begin
+          str = Base64.decode64(str)
+        rescue Exception => ex
+          byebug
+        end
+      end
+
       str = str.force_encoding(@encoding) unless @encoding.nil?
       str
     end
