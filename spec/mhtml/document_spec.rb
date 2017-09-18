@@ -47,6 +47,8 @@ module Mhtml
         expect(chunk_count).to be > 1
         expect(doc.encoding).to eq(Encoding::WINDOWS_1252)
       end
+
+      skip 'converts base64 to binary'
     end
 
     describe '#==' do
@@ -78,6 +80,10 @@ module Mhtml
       it 'returns true if Content-Transfer-Encoding is quoted-printable' do
         expect(doc.is_quoted_printable).to be(true)
       end
+    end
+
+    describe '#is_bas_64' do
+      skip 'returns true if Content-Transfer-Encoding is base64'
     end
 
     describe '#header' do

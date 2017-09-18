@@ -7,6 +7,7 @@ module Mhtml
     attr_accessor :headers, 
       :body, 
       :is_quoted_printable, 
+      :is_base_64,
       :encoding, 
       :file_path, 
       :root_doc
@@ -16,6 +17,7 @@ module Mhtml
       @header_key = nil
       @header_value_lines = nil
       @is_quoted_printable = false
+      @is_base_64 = false
       @encoding = nil
 
       @request = HttpParser::Parser.new_instance { |inst| inst.type = :response }
@@ -143,8 +145,12 @@ module Mhtml
         elsif header.key == 'Content-Transfer-Encoding'
           value = header.values.first
 
-          if !value.nil? && value.value == 'quoted-printable'
-            @is_quoted_printable = true
+          if !value.nil?
+            if value.value == 'quoted-printable'
+              @is_quoted_printable = true            
+            elsif value.value == 'base64'
+              @is_base_64 = true
+            end
           end
         
         elsif header.key == 'Content-Location'
@@ -161,6 +167,7 @@ module Mhtml
 
     def decode(str)
       str = str.unpack1('M*') if @is_quoted_printable
+      str = Base64.decode64(str) if @is_base_64
       str = str.force_encoding(@encoding) unless @encoding.nil?
       str
     end
